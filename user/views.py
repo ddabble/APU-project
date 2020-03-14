@@ -1,13 +1,15 @@
 from django.http import HttpResponse
-from projects.models import ProjectCategory
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import UserCreationForm
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import get_object_or_404, redirect, render
 
+from projects.models import ProjectCategory
 from .forms import SignUpForm
+
 
 def index(request):
     return render(request, 'base.html')
+
 
 def signup(request):
     if request.method == 'POST':

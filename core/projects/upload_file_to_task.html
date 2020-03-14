@@ -6,15 +6,15 @@
 
 
 {% block content %}
-  <h3>{{ project.title }}</h3>
-  <p>{{ project.description }}</>
+    <h3>{{ project.title }}</h3>
+    <p>{{ project.description }}</>
 
-  <h3>Task: {{task.title}}</h3>
+    <h3>Task: {{ task.title }}</h3>
     <form enctype="multipart/form-data" method="post">
-      {% csrf_token %}
+        {% csrf_token %}
 
-      {% bootstrap_form task_file_form %}
-    <button type="submit" class="btn btn-primary">Upload File</button>
-  </form>
-  {% load static %}
+        {% bootstrap_form task_file_form %}
+        <button type="submit" class="btn btn-primary">Upload File</button>
+    </form>
+    {% load static %}
 {% endblock %}

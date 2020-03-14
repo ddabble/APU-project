@@ -1,6 +1,7 @@
 from django import forms
 from .models import Payment
 
+
 class PaymentForm(forms.Form):
     cardnumber = forms.CharField(max_length=20, label="Card Number")
     expirymonth = forms.CharField(max_length=2, label="Expiry Month")

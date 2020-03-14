@@ -1,9 +1,11 @@
+import os
+
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
 from django.db import models
+
 from user.models import Profile
 
-from django.core.files.storage import FileSystemStorage
-from django.conf import settings
-import os
 
 class OverwriteStorage(FileSystemStorage):
 
@@ -36,6 +38,7 @@ class ProjectCategory(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class Project(models.Model):
     user = models.ForeignKey(Profile, on_delete=models.CASCADE)
@@ -86,7 +89,7 @@ class Task(models.Model):
 
 
     def __str__(self):
-        return  str(self.id) + " " + self.title
+        return str(self.id) + " " + self.title
 
     def accepted_task_offer(task):
         task_offer = None
@@ -105,7 +108,8 @@ class Team(models.Model):
 
 
     def __str__(self):
-        return  self.task.project.title + " - " + self.task.title + " - " + self.name
+        return self.task.project.title + " - " + self.task.title + " - " + self.name
+
 
 def directory_path(instance, filename):
     return 'static/uploads/tasks/{0}/{1}'.format(instance.task.id, filename)
@@ -120,6 +124,7 @@ class TaskFile(models.Model):
         file_name = parts[len(parts) - 1]
         return file_name
 
+
 class TaskFileTeam(models.Model):
     file = models.ForeignKey(TaskFile, on_delete=models.CASCADE, related_name="teams")
     team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name="file")
@@ -127,6 +132,7 @@ class TaskFileTeam(models.Model):
     read = models.BooleanField(default=False)
     write = models.BooleanField(default=False)
     modify = models.BooleanField(default=False)
+
 
 class Delivery(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="delivery")

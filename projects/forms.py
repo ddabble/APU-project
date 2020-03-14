@@ -1,7 +1,9 @@
 from django import forms
-from user.models import Profile
-from .models import Project, TaskFile, TaskOffer, Delivery, ProjectCategory, Team
 from django.contrib.auth.models import User
+
+from user.models import Profile
+from .models import Delivery, Project, ProjectCategory, TaskFile, TaskOffer, Team
+
 
 class ProjectForm(forms.ModelForm):
     title = forms.CharField(max_length=200)
@@ -12,6 +14,7 @@ class ProjectForm(forms.ModelForm):
         model = Project
         fields = ('title', 'description', 'category_id')
 
+
 class TaskFileForm(forms.ModelForm):
     file = forms.FileField()
 
@@ -19,11 +22,12 @@ class TaskFileForm(forms.ModelForm):
         model = TaskFile
         fields = ('file',)
 
-class ProjectStatusForm(forms.ModelForm):
 
+class ProjectStatusForm(forms.ModelForm):
     class Meta:
         model = Project
         fields = ('status',)
+
 
 class TaskOfferForm(forms.ModelForm):
     title = forms.CharField(max_length=200)
@@ -34,12 +38,14 @@ class TaskOfferForm(forms.ModelForm):
         model = TaskOffer
         fields = ('title', 'description', 'price',)
 
+
 class TaskOfferResponseForm(forms.ModelForm):
     feedback = forms.Textarea()
 
     class Meta:
         model = TaskOffer
         fields = ('status', 'feedback')
+
 
 class TaskDeliveryResponseForm(forms.ModelForm):
     feedback = forms.Textarea()
@@ -49,15 +55,15 @@ class TaskDeliveryResponseForm(forms.ModelForm):
         fields = ('status', 'feedback')
 
 
-PERMISSION_CHOICES = (
-    ('Read','Read'),
-    ('Write', 'Write'),
-    ('Modify','Modify'),
-)
-
 class TaskPermissionForm(forms.Form):
+    PERMISSION_CHOICES = (
+        ('Read', 'Read'),
+        ('Write', 'Write'),
+        ('Modify', 'Modify'),
+    )
     user = forms.ModelChoiceField(queryset=User.objects.all())
-    permission = forms.ChoiceField( choices=PERMISSION_CHOICES)
+    permission = forms.ChoiceField(choices=PERMISSION_CHOICES)
+
 
 class DeliveryForm(forms.ModelForm):
     comment = forms.Textarea()
@@ -65,7 +71,8 @@ class DeliveryForm(forms.ModelForm):
 
     class Meta:
         model = Delivery
-        fields = ('comment','file')
+        fields = ('comment', 'file')
+
 
 class TeamForm(forms.ModelForm):
     name = forms.CharField(max_length=50)
@@ -74,9 +81,10 @@ class TeamForm(forms.ModelForm):
         model = Team
         fields = ('name',)
 
+
 class TeamAddForm(forms.ModelForm):
     members = forms.ModelMultipleChoiceField(queryset=Profile.objects.all(), label='Members with read')
 
     class Meta:
         model = Team
-        fields = ('members', )
+        fields = ('members',)
