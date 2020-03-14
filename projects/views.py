@@ -29,7 +29,7 @@ def new_project(request):
             project.category = get_object_or_404(ProjectCategory, id=request.POST.get('category_id'))
             project.save()
 
-            people = Profile.objects.filter(categories__id=project.category.id)
+            people = Profile.objects.filter(categories__id=project.category.id).exclude(user=request.user)  # do not send email to creator
             from django.core import mail
             for person in people:
                 if person.user.email:
