@@ -1,9 +1,6 @@
-from django.http import HttpResponse
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.forms import UserCreationForm
-from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth import authenticate
+from django.shortcuts import redirect, render
 
-from projects.models import ProjectCategory
 from .forms import SignUpForm
 
 

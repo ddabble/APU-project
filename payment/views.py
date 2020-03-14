@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 
-from projects.models import Project, Task, TaskOffer
+from projects.models import Project, Task
 from projects.templatetags.project_extras import get_accepted_task_offer
 from .forms import PaymentForm
 from .models import Payment

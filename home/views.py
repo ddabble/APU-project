@@ -4,7 +4,7 @@ from projects.models import Project
 
 
 def home(request):
-    if (request.user.is_authenticated):
+    if request.user.is_authenticated:
         user = request.user
         user_projects = Project.objects.filter(user=user.profile)
         customer_projects = list(Project.objects.filter(participants__id=user.id).order_by().distinct())

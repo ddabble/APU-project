@@ -5,7 +5,11 @@ from django.dispatch import receiver
 
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    user = models.OneToOneField(
+        to=User,
+        on_delete=models.CASCADE,
+        related_name='profile',
+    )
     company = models.TextField(max_length=50, blank=True)
     phone_number = models.TextField(max_length=50, blank=True)
     country = models.TextField(max_length=50, blank=True)
@@ -13,7 +17,10 @@ class Profile(models.Model):
     city = models.TextField(max_length=50, blank=True)
     postal_code = models.TextField(max_length=50, blank=True)
     street_address = models.TextField(max_length=50, blank=True)
-    categories = models.ManyToManyField('projects.ProjectCategory', related_name='competance_categories')
+    categories = models.ManyToManyField(
+        to='projects.ProjectCategory',  # string to avoid circular import
+        related_name='competance_categories',
+    )
 
     def __str__(self):
         return self.user.username

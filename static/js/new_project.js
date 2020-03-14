@@ -13,7 +13,7 @@ addTaskButton.onclick = function () {
 
 removeTaskButton.onclick = function () {
     var taskChilds = taskContainer.childElementCount;
-    if (taskChilds == 1) {
+    if (taskChilds === 1) {
         alert("A project needs a minimum of 1 task");
     } else {
         taskContainer.removeChild(taskContainer.lastChild);
@@ -26,7 +26,7 @@ removeTaskButton.onclick = function () {
 budgetInput.onkeypress = function (e) {
     if (!((e.keyCode > 95 && e.keyCode < 106)
         || (e.keyCode > 47 && e.keyCode < 58)
-        || e.keyCode == 8)) {
+        || e.keyCode === 8)) {
         return false;
     }
-}
+};

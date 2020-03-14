@@ -1,6 +1,6 @@
 from django import template
 
-from projects.models import Project, Task, TaskOffer
+from projects.models import Task, TaskOffer
 
 register = template.Library()
 
@@ -14,7 +14,6 @@ def check_nr_pending_offers(project):
         for taskoffer in taskoffers:
             if taskoffer.status == TaskOffer.PENDING:
                 pending_offers += 1
-    # print(pending_offers)
     return pending_offers
 
 
@@ -38,7 +37,6 @@ def check_nr_user_offers(project, user):
     offers['declined'] = declined_offers
     offers['pending'] = pending_offers
     offers['accepted'] = accepted_offers
-    # print(offers)
     return offers
 
 
@@ -93,7 +91,6 @@ def all_tasks(project):
 @register.filter
 def offers(task):
     task_offers = task.taskoffer_set.all()
-    print(task_offers)
     msg = "No offers"
     if len(task_offers) > 0:
         x = 0
@@ -102,7 +99,7 @@ def offers(task):
             x += 1
             if t.status == 'a':
                 return "You have accepted an offer for this task"
-        msg += str(x) + " pending offers"
+        msg += f"{x} pending offers"
     return msg
 
 

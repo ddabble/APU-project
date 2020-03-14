@@ -23,7 +23,7 @@ class SignUpForm(UserCreationForm):
 
     categories = forms.ModelMultipleChoiceField(
         queryset=ProjectCategory.objects.all(),
-        help_text='Hold down "Control", or "Command" on a Mac, to select more than one.'
+        help_text='Hold down "Control", or "Command" on a Mac, to select more than one.',
     )
 
     class Meta:

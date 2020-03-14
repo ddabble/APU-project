@@ -48,7 +48,7 @@
                             <p>Status: {{ task_accepted_offer.get_status_display }}</p>
                             <div>
                                 <button class="btn btn-primary" data-toggle="modal" data-target="#seeOfferModal{{ task_offer.id }}">View Offer</button>
-                            <div>
+                            </div>
                         </li>
 
                         <div class="modal fade" id="seeOfferModal{{ task_offer.id }}" tabindex="-1" role="dialog"
@@ -61,7 +61,7 @@
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
-                                    <form method="post">
+                                    <form method="POST">
                                         <div class="modal-body">
                                             <h3>Offer</h3>
                                             <h4 class="mt-3">{{ task_accepted_offer.title }}</h4>
@@ -101,7 +101,7 @@
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                             </div>
-                                            <form method="post">
+                                            <form method="POST">
                                                 <div class="modal-body">
                                                     <h3>Offer</h3>
                                                     <h4 class="mt-3">{{ task_offer.title }}</h4>
@@ -160,7 +160,7 @@
 
             <div class="mt-5">
                 <h3 class="mt-3">Change project status</h3>
-                <form method="post">
+                <form method="POST">
                     {% csrf_token %}
                     {% bootstrap_form status_form %}
                     <button class="btn btn-primary" name="status_change" type="submit">Change status</button>
@@ -198,7 +198,7 @@
                                                 data-toggle="modal" data-target="#makeOfferModal{{ task.id }}">
                                             {{ offer.get_status_display }}
                                         </button>
-                                        <div>
+                                    </div>
                                 </li>
 
                                 <div class="modal fade" id="makeOfferModal{{ task.id }}" tabindex="-1" role="dialog"
@@ -211,7 +211,7 @@
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                             </div>
-                                            <form method="post">
+                                            <form method="POST">
                                                 <div class="modal-body">
                                                     <h3>Last Offer</h3>
                                                     <h4 class="mt-3">{{ offer.title }}</h4>
@@ -258,7 +258,7 @@
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
-                                        <form method="post">
+                                        <form method="POST">
                                             <div class="modal-body">
                                                 {% csrf_token %}
                                                 {% bootstrap_form task_offer_form %}
@@ -302,4 +302,4 @@
         {% endif %}
 
     {% endif %}
-{% endblock %}
+{% endblock content %}

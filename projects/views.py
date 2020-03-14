@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 
 from user.models import Profile
@@ -36,15 +36,15 @@ def new_project(request):
                     try:
                         with mail.get_connection() as connection:
                             mail.EmailMessage(
-                                "New Project: " + project.title,
-                                "A new project you might be interested in was created and can be viwed at " + current_site.domain + '/projects/' + str(project.id),
+                                f"New Project: {project.title}",
+                                f"A new project you might be interested in was created and can be viwed at {current_site.domain}/projects/{project.id}",
                                 "Agreelancer",
                                 [person.user.email],
                                 connection=connection,
                             ).send()
                     except Exception as e:
                         from django.contrib import messages
-                        messages.success(request, 'Sending of email to ' + person.user.email + " failed: " + str(e))
+                        messages.success(request, f"Sending of email to {person.user.email} failed: {e}")
 
             task_title = request.POST.getlist('task_title')
             task_description = request.POST.getlist('task_description')
@@ -121,7 +121,7 @@ def project_view(request, project_id):
         })
 
 
-def isProjectOwner(user, project):
+def is_project_owner(user, project):
     return user == project.user.user
 
 
@@ -132,7 +132,7 @@ def upload_file_to_task(request, project_id, task_id):
     user_permissions = get_user_task_permissions(request.user, task)
     accepted_task_offer = task.accepted_task_offer()
 
-    if user_permissions['modify'] or user_permissions['write'] or user_permissions['upload'] or isProjectOwner(request.user, project):
+    if user_permissions['modify'] or user_permissions['write'] or user_permissions['upload'] or is_project_owner(request.user, project):
         if request.method == 'POST':
             task_file_form = TaskFileForm(request.POST, request.FILES)
             if task_file_form.is_valid():
@@ -143,10 +143,9 @@ def upload_file_to_task(request, project_id, task_id):
                 access_to_file = False  # Initialize access_to_file to false
                 for team in request.user.profile.teams.all():
                     file_modify_access = TaskFileTeam.objects.filter(team=team, file=existing_file, modify=True).exists()
-                    print(file_modify_access)
                     access = access or file_modify_access
                 access = access or user_permissions['modify']
-                if (access):
+                if access:
                     if existing_file:
                         existing_file.delete()
                     task_file.save()
@@ -253,7 +252,7 @@ def task_view(request, project_id, task_id):
     if request.method == 'POST' and 'team' in request.POST:
         if accepted_task_offer and accepted_task_offer.offerer == user.profile:
             team_form = TeamForm(request.POST)
-            if (team_form.is_valid()):
+            if team_form.is_valid():
                 team = team_form.save(False)
                 team.task = task
                 team.save()
@@ -272,7 +271,7 @@ def task_view(request, project_id, task_id):
             for t in task.teams.all():
                 for f in task.files.all():
                     try:
-                        tft_string = 'permission-perobj-' + str(f.id) + '-' + str(t.id)
+                        tft_string = f'permission-perobj-{f.id}-{t.id}'
                         tft_id = request.POST.get(tft_string)
                         instance = TaskFileTeam.objects.get(id=tft_id)
                     except Exception as e:
@@ -281,11 +280,11 @@ def task_view(request, project_id, task_id):
                             team=t,
                         )
 
-                    instance.read = request.POST.get('permission-read-' + str(f.id) + '-' + str(t.id)) or False
-                    instance.write = request.POST.get('permission-write-' + str(f.id) + '-' + str(t.id)) or False
-                    instance.modify = request.POST.get('permission-modify-' + str(f.id) + '-' + str(t.id)) or False
+                    instance.read = request.POST.get(f'permission-read-{f.id}-{t.id}') or False
+                    instance.write = request.POST.get(f'permission-write-{f.id}-{t.id}') or False
+                    instance.modify = request.POST.get(f'permission-modify-{f.id}-{t.id}') or False
                     instance.save()
-                t.write = request.POST.get('permission-upload-' + str(t.id)) or False
+                t.write = request.POST.get(f'permission-upload-{str(t.id)}') or False
                 t.save()
 
     deliver_form = DeliveryForm()
@@ -314,7 +313,7 @@ def task_view(request, project_id, task_id):
             'team_form':             team_form,
             'team_add_form':         team_add_form,
             'team_files':            team_files,
-            'per':                   per
+            'per':                   per,
         })
 
     return redirect('/user/login')
@@ -342,7 +341,7 @@ def task_permissions(request, project_id, task_id):
                             task.write.add(user.profile)
                         elif permission_type == 'Modify':
                             task.modify.add(user.profile)
-                    except (Exception):
+                    except Exception:
                         print("user not found")
                     return redirect('task_view', project_id=project_id, task_id=task_id)
 

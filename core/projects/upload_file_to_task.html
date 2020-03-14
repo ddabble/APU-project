@@ -7,14 +7,14 @@
 
 {% block content %}
     <h3>{{ project.title }}</h3>
-    <p>{{ project.description }}</>
+    <p>{{ project.description }}</p>
 
     <h3>Task: {{ task.title }}</h3>
-    <form enctype="multipart/form-data" method="post">
+    <form enctype="multipart/form-data" method="POST">
         {% csrf_token %}
 
         {% bootstrap_form task_file_form %}
         <button type="submit" class="btn btn-primary">Upload File</button>
     </form>
     {% load static %}
-{% endblock %}
+{% endblock content %}
