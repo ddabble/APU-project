@@ -5,6 +5,27 @@ from user.models import Profile
 from .models import Delivery, Project, ProjectCategory, TaskFile, TaskOffer, Team
 
 
+class ProjectSortingForm(forms.Form):
+    TITLE = 'title'
+    NUM_TASKS = '_num_tasks'  # have to be different from any properties of the Project model, hence the underscore
+    TOTAL_BUDGET = '_total_budget'
+    NUM_OFFERS = '_num_offers'
+    SORTING_CHOICES = (
+        (None, '---'),
+        (TITLE, 'Title'),
+        (NUM_TASKS, 'Number of tasks'),
+        (TOTAL_BUDGET, 'Total budget'),
+        (NUM_OFFERS, 'Number of offers'),
+    )
+    sorting_field = forms.ChoiceField(choices=SORTING_CHOICES, required=False, label='Sort by:')
+    ascending = forms.BooleanField(initial=True, required=False)
+
+
+class ProjectFilteringForm(forms.Form):
+    max_total_budget = forms.IntegerField(required=False, min_value=0, label='Max. total budget')
+    max_num_offers = forms.IntegerField(required=False, min_value=0, label='Max. number of offers')
+
+
 class ProjectForm(forms.ModelForm):
     title = forms.CharField(max_length=200)
     description = forms.Textarea()

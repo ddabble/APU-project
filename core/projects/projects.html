@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 
+{% load bootstrap4 %}
 {% load icons %}
 {% load static %}
 {% load project_extras %}
@@ -26,13 +27,32 @@
                 </ul>
             </div>
 
+            <div class="containter-fluid">
+                <h4 class="mt-4">Sorting and filtering</h4>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="row justify-content-center align-items-center">
+                        <div class="col-3">
+                            {% bootstrap_form sorting_form %}
+                        </div>
+                        <div class="col-3">
+                            {% bootstrap_form filtering_form %}
+                        </div>
+
+                        <div class="col-1">
+                            {% bootstrap_button content="Apply" button_type="submit" size="large" extra_classes="bg-primary text-white" %}
+                        </div>
+                    </div>
+                </form>
+            </div>
+
             <div class="tab-content" id="nav-tabContent">
                 {% for project_category in project_categories %}
                     <div class="tab-pane fade show" id="{{ project_category }}" role="tabpanel" aria-labelledby="category-{{ project_category }}">
                         <h3 class="mb-3 mt-5">{{ project_category }}</h3>
                         <div class="row projects-view">
-                            {% for project in project_category.projects.all %}
-                                {% if project.status == project.OPEN %}
+                            {% for project in projects %}
+                                {% if project.status == project.OPEN and project.category.id == project_category.id %}
                                     <a class="open-project-view-item" href="{% url 'project_view' project_id=project.id %}">
                                         <div class="col-md mb-3 ml-3 mr-3 mt-3 project-box-style">
                                             <div class="media">
