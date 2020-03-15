@@ -1,12 +1,15 @@
+from http import HTTPStatus
+
+import django.views.generic as django_views
 from django.contrib.auth.models import User
 from django.db.models import Count, Sum
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 
 from user.models import Profile
-from .forms import DeliveryForm, ProjectFilteringForm, ProjectForm, ProjectSortingForm, ProjectStatusForm, TaskDeliveryResponseForm, TaskFileForm, \
-    TaskOfferForm, TaskOfferResponseForm, TaskPermissionForm, TeamAddForm, TeamForm
-from .models import Delivery, Project, ProjectCategory, Task, TaskFile, TaskFileTeam, TaskOffer, Team, directory_path
+from .forms import DeliveryForm, ProjectCategoryProposalForm, ProjectFilteringForm, ProjectForm, ProjectSortingForm, ProjectStatusForm, \
+    TaskDeliveryResponseForm, TaskFileForm, TaskOfferForm, TaskOfferResponseForm, TaskPermissionForm, TeamAddForm, TeamForm
+from .models import Delivery, Project, ProjectCategory, ProjectCategoryProposal, Task, TaskFile, TaskFileTeam, TaskOffer, Team, directory_path
 
 
 def projects(request):
@@ -103,7 +106,29 @@ def new_project(request):
             return redirect('project_view', project_id=project.id)
     else:
         form = ProjectForm()
-    return render(request, 'projects/new_project.html', {'form': form})
+
+    category_proposal_form = ProjectCategoryProposalForm()
+    return render(request, 'projects/new_project.html', {
+        'form':                   form,
+        'category_proposal_form': category_proposal_form,
+    })
+
+
+class ProposeCategoryView(django_views.edit.BaseCreateView):
+    model = ProjectCategoryProposal
+    form_class = ProjectCategoryProposalForm
+
+    def form_valid(self, form):
+        self.object = form.save()
+        # Return new form
+        return self.form_response(self.form_class(), HTTPStatus.OK)
+
+    def form_invalid(self, form):
+        return self.form_response(form, HTTPStatus.BAD_REQUEST)
+
+    def form_response(self, form, status: HTTPStatus):
+        return render(self.request, 'projects/propose_category_form.html', self.get_context_data(category_proposal_form=form),
+                      status=status)
 
 
 def project_view(request, project_id):

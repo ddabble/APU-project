@@ -1,0 +1,62 @@
+{% load bootstrap4 %}
+
+<div class="modal fade" id="propose-category-modal" tabindex="-1" role="dialog"
+     aria-labelledby="propose-category-modal-title" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="propose-category-modal-title">Propose new category</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="POST" id="propose-category-form" onsubmit="return submitForm()">
+                {% csrf_token %}
+                <div class="modal-body">
+                    {% include "projects/propose_category_form.html" %}
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="category-added-alert" class="alert alert-success alert-dismissible fade show fixed-top" role="alert">
+        <strong>New category proposal successfully submitted.</strong>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <script>
+        // Remove alert for being shown later
+        const categoryAddedAlert = $("#category-added-alert").remove();
+
+        function _replaceCategoryProposalForm(newForm) {
+            $("#propose-category-form-fields").replaceWith(newForm);
+        }
+
+        function submitForm() {
+            $.ajax({
+                url: "{% url 'propose_category' %}",
+                type: "POST",
+                data: $("#propose-category-form").serialize(),
+                success: function (response) {
+                    $("#propose-category-modal").modal("hide");
+
+                    // Show alert
+                    $(categoryAddedAlert).clone().insertBefore("#propose-category-modal");
+
+                    // Replace form with response form, to reset any previous errors
+                    _replaceCategoryProposalForm(response);
+                },
+                error: function (jqXHR) {
+                    // Replace form with response form, to show errors
+                    _replaceCategoryProposalForm(jqXHR.responseText);
+                },
+            });
+            return false;
+        }
+    </script>
+</div>

@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 
 from user.models import Profile
-from .models import Delivery, Project, ProjectCategory, TaskFile, TaskOffer, Team
+from .models import Delivery, Project, ProjectCategory, ProjectCategoryProposal, TaskFile, TaskOffer, Team
 
 
 class ProjectSortingForm(forms.Form):
@@ -34,6 +34,22 @@ class ProjectForm(forms.ModelForm):
     class Meta:
         model = Project
         fields = ('title', 'description', 'category_id')
+
+
+class ProjectCategoryProposalForm(forms.ModelForm):
+    class Meta:
+        model = ProjectCategoryProposal
+        fields = '__all__'
+
+    def clean_name(self):
+        name = self.cleaned_data['name']
+        if ProjectCategory.objects.filter(name__iexact=name).exists():
+            raise forms.ValidationError('Project category with this name already exists.')
+            # Enforcing a unique name within the ProjectCategoryProposal model is handled by name's `unique` argument
+
+        # Properly case the name
+        name = name.title()
+        return name
 
 
 class TaskFileForm(forms.ModelForm):

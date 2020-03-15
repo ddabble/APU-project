@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% load bootstrap4 %}
+{% load icons %}
 {% load static %}
 
 {% block title %}New Project{% endblock %}
@@ -10,7 +11,18 @@
     <h2 class="mt-3">New Project</h2>
     <form method="POST">
         {% csrf_token %}
-        {% bootstrap_form form %}
+        {% bootstrap_form_errors form %}
+        {% bootstrap_field form.title %}
+        {% bootstrap_field form.description %}
+        <div class="row align-items-center">
+            {% bootstrap_field form.category_id form_group_class="form-group col" %}
+            <div class="col-auto" data-toggle="tooltip" data-placement="top" title="Propose new category">
+                <a class="col-auto" data-toggle="modal" data-target="#propose-category-modal" style="color: lawngreen; cursor: pointer;">
+                    {% icon "plus" "fa-3x" %}
+                </a>
+            </div>
+        </div>
+
         <div id="task_container">
             <div class="task">
                 <h2>Task</h2>
@@ -46,5 +58,14 @@
 
         </div>
     </form>
+
+    {% include "projects/propose_category_modal.html" %}
+
     <script src="{% static 'js/new_project.js' %}"></script>
-{% endblock %}
+    <script>
+        // Enable tooltips
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
+{% endblock content %}

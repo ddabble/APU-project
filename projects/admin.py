@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Delivery, Project, ProjectCategory, Task, TaskFile, TaskFileTeam, Team
+from .models import Delivery, Project, ProjectCategory, ProjectCategoryProposal, Task, TaskFile, TaskFileTeam, Team
 
 
 class TaskInline(admin.TabularInline):
@@ -22,5 +22,6 @@ admin.site.register(Task)
 admin.site.register(TaskFile)
 admin.site.register(Delivery)
 admin.site.register(ProjectCategory)
+admin.site.register(ProjectCategoryProposal)
 admin.site.register(Team)
 admin.site.register(TaskFileTeam)
