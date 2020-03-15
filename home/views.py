@@ -6,7 +6,7 @@ from projects.models import Project
 def home(request):
     if request.user.is_authenticated:
         user = request.user
-        user_projects = Project.objects.filter(user=user.profile)
+        user_projects = Project.objects.filter(user_profile=user.profile)
         customer_projects = list(Project.objects.filter(participants__id=user.id).order_by().distinct())
         for team in user.profile.teams.all():
             customer_projects.append(team.task.project)

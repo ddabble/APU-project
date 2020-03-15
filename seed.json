@@ -168,7 +168,7 @@
     "model": "projects.project",
     "pk": 1,
     "fields": {
-      "user": 1,
+      "user_profile": 1,
       "title": "Fixing the outside of my house",
       "description": "Need painting and landscaping",
       "category": 3,
@@ -852,7 +852,7 @@
       "city": "",
       "postal_code": "",
       "street_address": "",
-      "categories": []
+      "competence_categories": []
     }
   },
   {
@@ -867,7 +867,7 @@
       "city": "",
       "postal_code": "",
       "street_address": "",
-      "categories": [
+      "competence_categories": [
         2
       ]
     }
@@ -884,7 +884,7 @@
       "city": "",
       "postal_code": "",
       "street_address": "",
-      "categories": [
+      "competence_categories": [
         3
       ]
     }
@@ -938,7 +938,7 @@
       "object_id": "2",
       "object_repr": "harrypotter",
       "action_flag": 2,
-      "change_message": "[{\"changed\": {\"fields\": [\"is_staff\", \"is_superuser\"]}}, {\"changed\": {\"name\": \"profile\", \"object\": \"harrypotter\", \"fields\": [\"company\", \"categories\"]}}]"
+      "change_message": "[{\"changed\": {\"fields\": [\"is_staff\", \"is_superuser\"]}}, {\"changed\": {\"name\": \"profile\", \"object\": \"harrypotter\", \"fields\": [\"company\", \"competence_categories\"]}}]"
     }
   },
   {
@@ -951,7 +951,7 @@
       "object_id": "3",
       "object_repr": "joe",
       "action_flag": 2,
-      "change_message": "[{\"changed\": {\"name\": \"profile\", \"object\": \"joe\", \"fields\": [\"company\", \"categories\"]}}]"
+      "change_message": "[{\"changed\": {\"name\": \"profile\", \"object\": \"joe\", \"fields\": [\"company\", \"competence_categories\"]}}]"
     }
   },
   {

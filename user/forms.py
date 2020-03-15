@@ -21,12 +21,12 @@ class SignUpForm(UserCreationForm):
     postal_code = forms.CharField(max_length=50)
     street_address = forms.CharField(max_length=50)
 
-    categories = forms.ModelMultipleChoiceField(
+    competence_categories = forms.ModelMultipleChoiceField(
         queryset=ProjectCategory.objects.all(),
         help_text='Hold down "Control", or "Command" on a Mac, to select more than one.',
     )
 
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'categories', 'company', 'email', 'email_confirmation', 'password1', 'password2',
+        fields = ('username', 'first_name', 'last_name', 'competence_categories', 'company', 'email', 'email_confirmation', 'password1', 'password2',
                   'phone_number', 'country', 'state', 'city', 'postal_code', 'street_address')

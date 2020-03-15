@@ -25,11 +25,11 @@ def new_project(request):
         form = ProjectForm(request.POST)
         if form.is_valid():
             project = form.save(commit=False)
-            project.user = request.user.profile
+            project.user_profile = request.user.profile
             project.category = get_object_or_404(ProjectCategory, id=request.POST.get('category_id'))
             project.save()
 
-            people = Profile.objects.filter(categories__id=project.category.id).exclude(user=request.user)  # do not send email to creator
+            people = Profile.objects.filter(competence_categories__id=project.category.id).exclude(user=request.user)  # do not send email to creator
             from django.core import mail
             for person in people:
                 if person.user.email:
@@ -70,7 +70,7 @@ def project_view(request, project_id):
     for item in tasks:
         total_budget += item.budget
 
-    if request.user == project.user.user:
+    if request.user == project.user_profile.user:
 
         if request.method == 'POST' and 'offer_response' in request.POST:
             instance = get_object_or_404(TaskOffer, id=request.POST.get('taskofferid'))
@@ -122,7 +122,7 @@ def project_view(request, project_id):
 
 
 def is_project_owner(user, project):
-    return user == project.user.user
+    return user == project.user_profile.user
 
 
 @login_required
@@ -150,7 +150,7 @@ def upload_file_to_task(request, project_id, task_id):
                         existing_file.delete()
                     task_file.save()
 
-                    if request.user.profile != project.user and request.user.profile != accepted_task_offer.offerer:
+                    if request.user.profile != project.user_profile and request.user.profile != accepted_task_offer.offerer:
                         teams = request.user.profile.teams.filter(task__id=task.id)
                         for team in teams:
                             tft = TaskFileTeam()
@@ -174,7 +174,7 @@ def upload_file_to_task(request, project_id, task_id):
 
 
 def get_user_task_permissions(user, task):
-    if user == task.project.user.user:
+    if user == task.project.user_profile.user:
         return {
             'write':  True,
             'read':   True,
@@ -325,7 +325,7 @@ def task_permissions(request, project_id, task_id):
     task = Task.objects.get(pk=task_id)
     project = Project.objects.get(pk=project_id)
     accepted_task_offer = task.accepted_task_offer()
-    if project.user == request.user.profile or user == accepted_task_offer.offerer.user:
+    if project.user_profile == request.user.profile or user == accepted_task_offer.offerer.user:
         task = Task.objects.get(pk=task_id)
         if int(project_id) == task.project.id:
             if request.method == 'POST':

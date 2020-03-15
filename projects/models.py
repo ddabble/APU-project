@@ -41,7 +41,7 @@ class ProjectCategory(models.Model):
 
 
 class Project(models.Model):
-    user = models.ForeignKey(
+    user_profile = models.ForeignKey(
         to=Profile,
         on_delete=models.CASCADE,
     )

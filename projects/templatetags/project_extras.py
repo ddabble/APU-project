@@ -55,8 +55,8 @@ def check_taskoffers(task, user):
 
 
 @register.filter
-def get_all_taskoffers(value):
-    taskoffers = value.taskoffer_set.all()
+def get_all_taskoffers(task):
+    taskoffers = task.taskoffer_set.all()
     return taskoffers
 
 

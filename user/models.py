@@ -17,7 +17,7 @@ class Profile(models.Model):
     city = models.TextField(max_length=50, blank=True)
     postal_code = models.TextField(max_length=50, blank=True)
     street_address = models.TextField(max_length=50, blank=True)
-    categories = models.ManyToManyField(
+    competence_categories = models.ManyToManyField(
         to='projects.ProjectCategory',  # string to avoid circular import
         related_name='competance_categories',
     )

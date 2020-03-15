@@ -10,7 +10,7 @@ from .models import Payment
 @login_required
 def payment(request, project_id, task_id):
     task = Task.objects.get(pk=task_id)
-    sender = Project.objects.get(pk=project_id).user
+    sender = Project.objects.get(pk=project_id).user_profile
     receiver = get_accepted_task_offer(task).offerer
 
     if request.method == 'POST':

@@ -143,8 +143,8 @@
             <h4>{{ team.name }}</h4>
             Members:
             <ul>
-                {% for user in team.members.all %}
-                    <li>{{ user.user.username }}</li>
+                {% for member in team.members.all %}
+                    <li>{{ member.user.username }}</li>
                 {% endfor %}
             </ul>
             <!-- add Task team member-->
@@ -332,7 +332,7 @@
     {% endif %}
 
     <div>
-        {% if user == project.user.user %}
+        {% if user == project.user_profile.user %}
             {% if task.status == task.PAYMENT_SENT %}
                 <a class="btn btn-primary" role="button" href="{% url 'receipt' project_id=project.id task_id=task.id %}">See receipt</a>
             {% elif task.status == task.PENDING_PAYMENT %}
