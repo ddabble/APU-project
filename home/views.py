@@ -28,7 +28,7 @@ def home(request):
 def get_given_offer_projects(user):
     project_ids = set()
 
-    for taskoffer in user.profile.taskoffer_set.all():
+    for taskoffer in user.profile.task_offers.all():
         project_ids.add(taskoffer.task.project.id)
 
     return project_ids

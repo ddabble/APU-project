@@ -44,17 +44,18 @@ class Project(models.Model):
     user_profile = models.ForeignKey(
         to=Profile,
         on_delete=models.CASCADE,
+        related_name='projects',
     )
     title = models.CharField(max_length=200)
     description = models.TextField(max_length=500)
     participants = models.ManyToManyField(
         to=Profile,
-        related_name='project_participants',
+        related_name='participating_projects',
     )
     category = models.ForeignKey(
         to=ProjectCategory,
         on_delete=models.CASCADE,
-        related_name='project_category',
+        related_name='projects',
     )
 
     OPEN = 'o'
@@ -116,7 +117,7 @@ class Task(models.Model):
     def accepted_task_offer(self):
         task_offer = None
         try:
-            task_offer = self.taskoffer_set.get(status='a')
+            task_offer = self.offers.get(status='a')
         except TaskOffer.DoesNotExist:
             pass
         return task_offer
@@ -166,7 +167,7 @@ class TaskFileTeam(models.Model):
     team = models.ForeignKey(
         to=Team,
         on_delete=models.CASCADE,
-        related_name='file',
+        related_name='task_file_teams',
     )
     name = models.CharField(max_length=200)
     read = models.BooleanField(default=False)
@@ -178,7 +179,7 @@ class Delivery(models.Model):
     task = models.ForeignKey(
         to=Task,
         on_delete=models.CASCADE,
-        related_name='delivery',
+        related_name='deliveries',
     )
     file = models.FileField(upload_to=directory_path)
     comment = models.TextField(max_length=500)
@@ -213,6 +214,7 @@ class TaskOffer(models.Model):
     task = models.ForeignKey(
         to=Task,
         on_delete=models.CASCADE,
+        related_name='offers',
     )
     title = models.CharField(max_length=200)
     description = models.TextField(max_length=500)
@@ -220,6 +222,7 @@ class TaskOffer(models.Model):
     offerer = models.ForeignKey(
         to=Profile,
         on_delete=models.CASCADE,
+        related_name='task_offers',
     )
 
     ACCEPTED = 'a'

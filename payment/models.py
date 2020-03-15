@@ -8,16 +8,17 @@ class Payment(models.Model):
     payer = models.ForeignKey(
         to=Profile,
         on_delete=models.CASCADE,
-        related_name="payer",
+        related_name="paying_payments",
     )
     receiver = models.ForeignKey(
         to=Profile,
         on_delete=models.CASCADE,
-        related_name="receiver",
+        related_name="receiving_payments",
     )
     task = models.ForeignKey(
         to=Task,
         on_delete=models.CASCADE,
+        related_name="payments",
     )
 
     def __str__(self):

@@ -45,7 +45,7 @@ def define(val=None):
 
 @register.filter
 def check_taskoffers(task, user):
-    taskoffers = task.taskoffer_set.filter(offerer=user.profile)
+    taskoffers = task.offers.filter(offerer=user.profile)
     useroffers = []
 
     for item in taskoffers:
@@ -56,7 +56,7 @@ def check_taskoffers(task, user):
 
 @register.filter
 def get_all_taskoffers(task):
-    taskoffers = task.taskoffer_set.all()
+    taskoffers = task.offers.all()
     return taskoffers
 
 
@@ -64,7 +64,7 @@ def get_all_taskoffers(task):
 def get_accepted_task_offer(task):
     task_offer = None
     try:
-        task_offer = task.taskoffer_set.get(status='a')
+        task_offer = task.offers.get(status='a')
     except TaskOffer.DoesNotExist:
         pass
 

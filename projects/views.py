@@ -9,11 +9,8 @@ from .models import Delivery, Project, ProjectCategory, Task, TaskFile, TaskFile
 
 
 def projects(request):
-    projects = Project.objects.all()
-    project_categories = ProjectCategory.objects.all()
     return render(request, 'projects/projects.html', {
-        'projects':           projects,
-        'project_categories': project_categories,
+        'project_categories': ProjectCategory.objects.prefetch_related('projects'),
     })
 
 
@@ -293,7 +290,7 @@ def task_view(request, project_id, task_id):
     team_add_form = TeamAddForm()
 
     if user_permissions['read'] or user_permissions['write'] or user_permissions['modify'] or user_permissions['owner'] or user_permissions['view_task']:
-        deliveries = task.delivery.all()
+        deliveries = task.deliveries.all()
         team_files = []
         teams = user.profile.teams.filter(task__id=task.id).all()
         per = {}

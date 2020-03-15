@@ -10,7 +10,7 @@ def check_nr_pending_offers(project):
     pending_offers = 0
     tasks = project.tasks.all()
     for task in tasks:
-        taskoffers = task.taskoffer_set.all()
+        taskoffers = task.offers.all()
         for taskoffer in taskoffers:
             if taskoffer.status == TaskOffer.PENDING:
                 pending_offers += 1
@@ -25,7 +25,7 @@ def check_nr_user_offers(project, user):
     accepted_offers = 0
     tasks = project.tasks.all()
     for task in tasks:
-        taskoffers = task.taskoffer_set.filter(offerer=user.profile)
+        taskoffers = task.offers.filter(offerer=user.profile)
         for taskoffer in taskoffers:
             if taskoffer.status == TaskOffer.PENDING:
                 pending_offers += 1
@@ -90,7 +90,7 @@ def all_tasks(project):
 
 @register.filter
 def offers(task):
-    task_offers = task.taskoffer_set.all()
+    task_offers = task.offers.all()
     msg = "No offers"
     if len(task_offers) > 0:
         x = 0
@@ -117,7 +117,7 @@ def get_user_task_statuses(project, user):
 
     for task in tasks:
         try:
-            task_offer = task.taskoffer_set.get(status='a')
+            task_offer = task.offers.get(status='a')
             if task_offer.offerer == user.profile:
                 if task.status == Task.AWAITING_DELIVERY:
                     awaiting_delivery += 1

@@ -19,7 +19,7 @@ class Profile(models.Model):
     street_address = models.TextField(max_length=50, blank=True)
     competence_categories = models.ManyToManyField(
         to='projects.ProjectCategory',  # string to avoid circular import
-        related_name='competance_categories',
+        related_name='competent_profiles',
     )
 
     def __str__(self):
