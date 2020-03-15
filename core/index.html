@@ -13,6 +13,14 @@
             <div class="col-lg text-center">
                 <h2 class="mt-5">Welcome {{ user.username }}! <img class="ml-1 honey" src="{% static 'img/handshake.png' %}" alt="Logo image"/></h2>
                 <p class="mt-5">What would you like to do today?</p>
+                {% if user.is_staff %}
+                    <p>
+                        <a href="{% url 'category_proposals' %}">
+                            There {% if num_category_proposals == 1 %}is{% else %}are{% endif %} {{ num_category_proposals }}
+                            new category proposal{{ num_category_proposals|pluralize }}.
+                        </a>
+                    </p>
+                {% endif %}
             </div>
         </div>
         <div class="row">

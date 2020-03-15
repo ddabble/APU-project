@@ -131,6 +131,23 @@ class ProposeCategoryView(django_views.edit.BaseCreateView):
                       status=status)
 
 
+class CategoryProposalsView(django_views.ListView):
+    model = ProjectCategoryProposal
+    template_name = 'projects/category_proposals.html'
+
+    def post(self, request, *args, **kwargs):
+        accept = request.POST.get('accept')
+        reject = request.POST.get('reject')
+        if accept is not None or reject is not None:
+            category_proposal = get_object_or_404(self.model, pk=accept or reject)
+            if accept is not None:
+                ProjectCategory.objects.create(name=category_proposal.name)
+            category_proposal.delete()
+
+        # Redirect to same page
+        return HttpResponseRedirect(request.path_info)
+
+
 def project_view(request, project_id):
     project = Project.objects.get(pk=project_id)
     tasks = project.tasks.all()

@@ -1,6 +1,6 @@
 from django.shortcuts import redirect, render
 
-from projects.models import Project
+from projects.models import Project, ProjectCategoryProposal
 
 
 def home(request):
@@ -17,9 +17,10 @@ def home(request):
         customer_projects = cd.values()
         given_offers_projects = Project.objects.filter(pk__in=get_given_offer_projects(user)).distinct()
         return render(request, 'index.html', {
-            'user_projects':         user_projects,
-            'customer_projects':     customer_projects,
-            'given_offers_projects': given_offers_projects,
+            'user_projects':          user_projects,
+            'customer_projects':      customer_projects,
+            'given_offers_projects':  given_offers_projects,
+            'num_category_proposals': ProjectCategoryProposal.objects.count(),
         })
     else:
         return redirect('projects')
