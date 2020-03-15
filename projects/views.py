@@ -9,7 +9,7 @@ from .models import Delivery, Project, ProjectCategory, Task, TaskFile, TaskFile
 
 def projects(request):
     return render(request, 'projects/projects.html', {
-        'project_categories': ProjectCategory.objects.prefetch_related('projects'),
+        'project_categories': ProjectCategory.objects.prefetch_related('projects__tasks__offers'),
     })
 
 
@@ -60,10 +60,6 @@ def new_project(request):
 def project_view(request, project_id):
     project = Project.objects.get(pk=project_id)
     tasks = project.tasks.all()
-    total_budget = 0  # Initializes the total budget to 0
-
-    for item in tasks:
-        total_budget += item.budget
 
     if request.user == project.user_profile.user:
 
@@ -94,7 +90,6 @@ def project_view(request, project_id):
             'project':             project,
             'tasks':               tasks,
             'status_form':         status_form,
-            'total_budget':        total_budget,
             'offer_response_form': offer_response_form,
         })
 
@@ -112,7 +107,6 @@ def project_view(request, project_id):
             'project':         project,
             'tasks':           tasks,
             'task_offer_form': task_offer_form,
-            'total_budget':    total_budget,
         })
 
 

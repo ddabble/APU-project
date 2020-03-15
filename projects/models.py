@@ -3,6 +3,7 @@ import os
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.db import models
+from django.db.models import Count
 
 from user.models import Profile
 
@@ -67,6 +68,19 @@ class Project(models.Model):
         (FINISHED, 'Finished'),
     )
     status = models.CharField(max_length=11, choices=STATUS_CHOICES, default=OPEN)
+
+    @property
+    def num_tasks(self):
+        return len(self.tasks.all())
+
+    @property
+    def total_budget(self):
+        return sum(task.budget for task in self.tasks.all())
+
+    @property
+    def num_offers(self):
+        aggregation_dict = self.tasks.aggregate(num_offers=Count('offers'))
+        return aggregation_dict['num_offers']
 
     def __str__(self):
         return self.title
