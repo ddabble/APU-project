@@ -1,4 +1,3 @@
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
@@ -14,7 +13,6 @@ def projects(request):
     })
 
 
-@login_required
 def new_project(request):
     from django.contrib.sites.shortcuts import get_current_site
     current_site = get_current_site(request)
@@ -122,7 +120,6 @@ def is_project_owner(user, project):
     return user == project.user_profile.user
 
 
-@login_required
 def upload_file_to_task(request, project_id, task_id):
     project = Project.objects.get(pk=project_id)
     task = Task.objects.get(pk=task_id)
@@ -207,7 +204,6 @@ def get_user_task_permissions(user, task):
     return user_permissions
 
 
-@login_required
 def task_view(request, project_id, task_id):
     user = request.user
     project = Project.objects.get(pk=project_id)
@@ -316,7 +312,6 @@ def task_view(request, project_id, task_id):
     return redirect('/user/login')
 
 
-@login_required
 def task_permissions(request, project_id, task_id):
     user = request.user
     task = Task.objects.get(pk=task_id)
@@ -351,7 +346,6 @@ def task_permissions(request, project_id, task_id):
     return redirect('task_view', project_id=project_id, task_id=task_id)
 
 
-@login_required
 def delete_file(request, file_id):
     f = TaskFile.objects.get(pk=file_id)
     f.delete()

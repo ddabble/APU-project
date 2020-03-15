@@ -1,4 +1,3 @@
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 
 from projects.models import Project, Task
@@ -7,7 +6,6 @@ from .forms import PaymentForm
 from .models import Payment
 
 
-@login_required
 def payment(request, project_id, task_id):
     task = Task.objects.get(pk=task_id)
     sender = Project.objects.get(pk=project_id).user_profile
@@ -25,7 +23,6 @@ def payment(request, project_id, task_id):
     return render(request, 'payment/payment.html', {'form': form})
 
 
-@login_required
 def receipt(request, project_id, task_id):
     project = Project.objects.get(pk=project_id)
     task = Task.objects.get(pk=task_id)
