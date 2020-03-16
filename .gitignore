@@ -120,3 +120,7 @@ venv.bak/
 
 # Visual Studio Code
 .vscode/
+
+
+# Secrets
+secret.txt

@@ -18,14 +18,20 @@ import django_heroku
 
 
 # Build paths inside the project like this: BASE_DIR / ...
-BASE_DIR = Path(__file__).resolve().parent.parent
+SETTINGS_DIR = Path(__file__).resolve().parent
+BASE_DIR = SETTINGS_DIR.parent
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '$n%^#g%qx#82w6t^dvjqwv)q*1cy+fwh1ohku7-rbjqcei2^jr'
+SECRET_KEY = os.environ.get('SECRET_KEY', None)
+if SECRET_KEY is None:
+    secret_key_file = SETTINGS_DIR / 'secret.txt'
+    try:
+        SECRET_KEY = secret_key_file.read_text().strip()
+    except IOError:
+        raise FileNotFoundError(f'Please set the environment variable SECRET_KEY, or create the file "{secret_key_file}" containing the secret key.')
 
 
 ADMINS = [('APU', 'tdt4242apu@gmail.com')]
