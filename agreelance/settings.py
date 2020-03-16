@@ -34,7 +34,7 @@ if SECRET_KEY is None:
         raise FileNotFoundError(f'Please set the environment variable SECRET_KEY, or create the file "{secret_key_file}" containing the secret key.')
 
 
-ADMINS = [('APU', 'tdt4242apu@gmail.com')]
+ADMINS = [('APU', 'agreelance.i12@gmail.com')]
 
 ALLOWED_HOSTS = [
     '127.0.0.1',
