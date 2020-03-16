@@ -2,6 +2,8 @@
 
 The best way to agree on the price of your freelancing jobs!
 
+Now available at [agreelance-i12.herokuapp.com](https://agreelance-i12.herokuapp.com/)!
+
 ## Code and structure
 
 .gitlab-ci.yml - gitlab ci
