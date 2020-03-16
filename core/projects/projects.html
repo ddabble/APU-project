@@ -33,10 +33,10 @@
                     {% csrf_token %}
                     <div class="row justify-content-center align-items-center">
                         <div class="col-3">
-                            {% bootstrap_form sorting_form %}
+                            {% bootstrap_form sorting_form bound_css_class="" %}
                         </div>
                         <div class="col-3">
-                            {% bootstrap_form filtering_form %}
+                            {% bootstrap_form filtering_form bound_css_class="" %}
                         </div>
 
                         <div class="col-1">
