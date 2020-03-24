@@ -27,7 +27,7 @@ jobs:
       run: |
         coverage run manage.py test
     - name: Upload to codecov
-      uses: codecov/codecov-action@v1.0.6
+      uses: codecov/codecov-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         file: ./.coverage
