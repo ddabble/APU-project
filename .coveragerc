@@ -1,6 +1,6 @@
 [run]
-source =
-    .
+# Current, top-level directory
+source=.
 
 [report]
 exclude_lines =
