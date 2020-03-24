@@ -3,6 +3,7 @@ from django.test import Client, TestCase
 from django.urls import reverse
 
 from . import views
+from .forms import TaskOfferForm
 from .models import Project, ProjectCategory, Task, TaskOffer
 
 
@@ -66,6 +67,20 @@ class ProjectViewTests(ProjectTestCase):
                                                             'status':         TaskOffer.ACCEPTED, 'feedback': "All right"})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.project1.participants.count(), 1)
+
+    def test_task_offer_boundaries(self):
+        def test_task_offer_title_length(title_length: int, valid: bool):
+            title = "a" * title_length
+            self.assertFalse(self.project1_task1.offers.filter(title=title).exists())
+            self.project_manger_c.post(self.project1_url, {'offer_submit': True, 'taskvalue': self.project1_task1.pk,
+                                                           'title':        title, 'description': "Nothing", 'price': 100})
+            self.assertEqual(self.project1_task1.offers.filter(title=title).exists(), valid)
+
+        title_max_length = TaskOfferForm.declared_fields['title'].max_length
+        test_task_offer_title_length(0, False)
+        test_task_offer_title_length(1, True)
+        test_task_offer_title_length(title_max_length, True)
+        test_task_offer_title_length(title_max_length + 1, False)
 
 
 class UserTaskPermissionsTests(ProjectTestCase):
