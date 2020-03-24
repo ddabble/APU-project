@@ -1,4 +1,6 @@
 # Agreelance
+[![build badge](https://github.com/ddabble/APU-project/workflows/build/badge.svg)](https://github.com/ddabble/APU-project/actions)
+[![codecov badge](https://codecov.io/gh/ddabble/APU-project/branch/master/graph/badge.svg)](https://codecov.io/gh/ddabble/APU-project)
 
 The best way to agree on the price of your freelancing jobs!
 
