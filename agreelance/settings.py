@@ -14,8 +14,6 @@ import os
 import sys
 from pathlib import Path
 
-import django_heroku
-
 
 # Build paths inside the project like this: BASE_DIR / ...
 SETTINGS_DIR = Path(__file__).resolve().parent
@@ -169,6 +167,8 @@ if not TEST and not is_prod:
         print("#########")
 
 if is_prod:
+    import django_heroku
+
     DEBUG = False
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     EMAIL_HOST = 'smtp.gmail.com'

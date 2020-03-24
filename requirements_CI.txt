@@ -1,3 +1,2 @@
 -r requirements/base.txt
-django-heroku
 coverage
