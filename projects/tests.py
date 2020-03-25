@@ -51,22 +51,39 @@ class ProjectViewTests(ProjectTestCase):
         self.assertEqual(self.project1.status, Project.OPEN)
 
     def test_task_offers(self):
+        task = self.project1_task1
         # Project manager makes an offer for a task
-        self.assertEqual(self.project1_task1.offers.count(), 0)
-        response = self.project_manger_c.post(self.project1_url, {'offer_submit': True, 'taskvalue': self.project1_task1.pk,
+        self.assertEqual(task.offers.count(), 0)
+        response = self.project_manger_c.post(self.project1_url, {'offer_submit': True, 'taskvalue': task.pk,
                                                                   'title':        "My offer", 'description': "Nothing", 'price': 100})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(self.project1_task1.offers.count(), 1)
+        self.assertEqual(task.offers.count(), 1)
 
-        self._test_task_offer_response()
+        self._test_accept_task_offer_output_coverage(task)
 
-    def _test_task_offer_response(self):
-        # Customer accepts offer
+    def _test_accept_task_offer_output_coverage(self, task):
+        task_offer = self.project_manager.profile.task_offers.get()  # will raise exception if more than 1
+
+        self.assertNotEqual(task_offer.status, TaskOffer.ACCEPTED)
+        self.assertIsNone(task.accepted_task_offer())
+        self.assertEqual(task.read.count(), 0)
+        self.assertEqual(task.write.count(), 0)
+        self.assertEqual(task.modify.count(), 0)
         self.assertEqual(self.project1.participants.count(), 0)
-        response = self.customer_c.post(self.project1_url, {'offer_response': True, 'taskofferid': self.project1_task1.pk,
-                                                            'status':         TaskOffer.ACCEPTED, 'feedback': "All right"})
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(self.project1.participants.count(), 1)
+
+        # Customer accepts offer
+        customer_feedback = "All right"
+        self.customer_c.post(self.project1_url, {'offer_response': True, 'taskofferid': task.pk,
+                                                 'status':         TaskOffer.ACCEPTED, 'feedback': customer_feedback})
+        task_offer.refresh_from_db()
+
+        self.assertEqual(task_offer.status, TaskOffer.ACCEPTED)
+        self.assertEqual(task_offer.feedback, customer_feedback)
+        self.assertEqual(task.accepted_task_offer(), task_offer)
+        self.assertEqual(task.read.get(), self.project_manager.profile)  # get() will raise exception if more than 1
+        self.assertEqual(task.write.get(), self.project_manager.profile)  # get() will raise exception if more than 1
+        self.assertEqual(task.modify.count(), 0)
+        self.assertEqual(self.project1.participants.get(), self.project_manager.profile)
 
     def test_task_offer_boundaries(self):
         def test_task_offer_title_length(title_length: int, valid: bool):
