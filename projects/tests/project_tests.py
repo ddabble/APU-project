@@ -2,9 +2,9 @@ from django.contrib.auth.models import User
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from . import views
-from .forms import TaskOfferForm
-from .models import Project, ProjectCategory, Task, TaskOffer
+from .. import views
+from ..forms import TaskOfferForm
+from ..models import Project, ProjectCategory, Task, TaskOffer
 
 
 class ProjectTestCase(TestCase):
