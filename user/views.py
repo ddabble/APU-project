@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth import authenticate
 from django.shortcuts import redirect, render
 
@@ -22,7 +23,6 @@ def signup(request):
             user.save()
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=user.username, password=raw_password)
-            from django.contrib import messages
             messages.success(request, 'Your account has been created and is awaiting verification.')
             return redirect('home')
     else:

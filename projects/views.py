@@ -279,7 +279,7 @@ def get_user_task_permissions(user, task):
     }
     user_permissions['read'] = user_permissions['read'] or user.profile.task_participants_read.filter(id=task.id).exists()
 
-    # Team members can view its teams tasks
+    # Team members can view their teams' tasks
     user_permissions['upload'] = user_permissions['upload'] or user.profile.teams.filter(task__id=task.id, write=True).exists()
     user_permissions['view_task'] = user_permissions['view_task'] or user.profile.teams.filter(task__id=task.id).exists()
 
@@ -296,7 +296,8 @@ def task_view(request, project_id, task_id):
     accepted_task_offer = task.accepted_task_offer()
 
     user_permissions = get_user_task_permissions(request.user, task)
-    if not user_permissions['read'] and not user_permissions['write'] and not user_permissions['modify'] and not user_permissions['owner'] and not user_permissions['view_task']:
+    if not user_permissions['read'] and not user_permissions['write'] and not user_permissions['modify'] \
+            and not user_permissions['owner'] and not user_permissions['view_task']:
         return redirect('/user/login')
 
     if request.method == 'POST' and 'delivery' in request.POST:
@@ -370,7 +371,8 @@ def task_view(request, project_id, task_id):
     team_form = TeamForm()
     team_add_form = TeamAddForm()
 
-    if user_permissions['read'] or user_permissions['write'] or user_permissions['modify'] or user_permissions['owner'] or user_permissions['view_task']:
+    if user_permissions['read'] or user_permissions['write'] or user_permissions['modify'] \
+            or user_permissions['owner'] or user_permissions['view_task']:
         deliveries = task.deliveries.all()
         team_files = []
         teams = user.profile.teams.filter(task__id=task.id).all()

@@ -34,12 +34,6 @@ if SECRET_KEY is None:
 
 ADMINS = [('APU', 'agreelance.i12@gmail.com')]
 
-ALLOWED_HOSTS = [
-    '127.0.0.1',
-    'localhost',
-    '0.0.0.0',
-]
-
 
 # Application definition
 
@@ -149,12 +143,13 @@ STATICFILES_DIRS = (
 
 STATIC_ROOT = BASE_DIR / 'agreelance/staticfiles'
 
+# Prints sent emails to the console
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 TEST = 'test' in sys.argv
-is_prod = os.environ.get('IS_HEROKU', None)
+IS_PROD = os.environ.get('IS_HEROKU', None)
 
-if not TEST and not is_prod:
+if not TEST and not IS_PROD:
     # SECURITY WARNING: don't run with debug turned on in production!
     DEBUG = True
     try:
@@ -166,10 +161,15 @@ if not TEST and not is_prod:
         print("")
         print("#########")
 
-if is_prod:
+if IS_PROD:
     import django_heroku
 
     DEBUG = False
+
+    ALLOWED_HOSTS = [
+        '0.0.0.0',
+    ]
+
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     EMAIL_HOST = 'smtp.gmail.com'
     EMAIL_USE_TLS = True

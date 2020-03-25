@@ -10,7 +10,7 @@ class SignUpForm(UserCreationForm):
     last_name = forms.CharField(max_length=30)
     company = forms.CharField(max_length=30, required=False, help_text='Here you can add your company.')
 
-    email = forms.EmailField(max_length=254, help_text='Inform a valid email address.')
+    email = forms.EmailField(max_length=254, help_text='Input a valid email address.')
     email_confirmation = forms.EmailField(max_length=254, help_text='Enter the same email as before, for verification.')
 
     phone_number = forms.CharField(max_length=50)
