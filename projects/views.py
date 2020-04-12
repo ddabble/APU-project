@@ -96,7 +96,7 @@ def new_project(request):
             task_title = request.POST.getlist('task_title')
             task_description = request.POST.getlist('task_description')
             task_budget = request.POST.getlist('task_budget')
-            for i in range(0, len(task_title)):
+            for i in range(len(task_title)):
                 Task.objects.create(
                     title=task_title[i],
                     description=task_description[i],
@@ -219,7 +219,7 @@ def upload_file_to_task(request, project_id, task_id):
                 task_file.task = task
                 existing_file = task.files.filter(file=directory_path(task_file, task_file.file.file)).first()
                 access = user_permissions['modify'] or user_permissions['owner']
-                access_to_file = False  # Initialize access_to_file to false
+                access_to_file = False
                 for team in request.user.profile.teams.all():
                     file_modify_access = TaskFileTeam.objects.filter(team=team, file=existing_file, modify=True).exists()
                     access = access or file_modify_access
@@ -249,7 +249,7 @@ def upload_file_to_task(request, project_id, task_id):
             'task':           task,
             'task_file_form': task_file_form,
         })
-    return redirect('/user/login')  # Redirects to /user/login
+    return redirect('/user/login')
 
 
 def get_user_task_permissions(user, task):

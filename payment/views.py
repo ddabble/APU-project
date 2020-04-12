@@ -14,7 +14,7 @@ def payment(request, project_id, task_id):
     if request.method == 'POST':
         payment = Payment(payer=sender, receiver=receiver, task=task)
         payment.save()
-        task.status = Task.PAYMENT_SENT  # Set task status to payment sent
+        task.status = Task.PAYMENT_SENT
         task.save()
 
         return redirect('receipt', project_id=project_id, task_id=task_id)

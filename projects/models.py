@@ -26,9 +26,9 @@ class OverwriteStorage(FileSystemStorage):
                 if this.MyImageFieldName != self.MyImageFieldName:
                     this.MyImageFieldName.delete()
             except: pass
-            super(MyModelName, self).save(*args, **kwargs)
+            super().save(*args, **kwargs)
         """
-        # If the filename already exists, remove it as if it was a true file system
+        # If the filename already exists, remove it as if it were a true file system
         if self.exists(name):
             os.remove(os.path.join(settings.MEDIA_ROOT, name))
         return name
@@ -162,7 +162,7 @@ class Team(models.Model):
 
 
 def directory_path(instance, filename):
-    return 'static/uploads/tasks/{0}/{1}'.format(instance.task.id, filename)
+    return f'static/uploads/tasks/{instance.task.id}/{filename}'
 
 
 class TaskFile(models.Model):
@@ -175,7 +175,7 @@ class TaskFile(models.Model):
 
     def name(self):
         parts = self.file.path.split("/")
-        file_name = parts[len(parts) - 1]
+        file_name = parts[-1]
         return file_name
 
 

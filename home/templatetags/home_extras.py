@@ -92,7 +92,7 @@ def all_tasks(project):
 def offers(task):
     task_offers = task.offers.all()
     msg = "No offers"
-    if len(task_offers) > 0:
+    if task_offers:
         x = 0
         msg = "You have "
         for t in task_offers:

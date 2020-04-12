@@ -20,8 +20,8 @@ class CustomUserAdmin(UserAdmin):
 
     def get_inline_instances(self, request, obj=None):
         if not obj:
-            return list()  # Returns empty list
-        return super(CustomUserAdmin, self).get_inline_instances(request, obj)
+            return []
+        return super().get_inline_instances(request, obj)
 
     def get_company(self, obj):
         return obj.profile.company

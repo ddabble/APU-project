@@ -13,8 +13,8 @@ class ProjectAdmin(admin.ModelAdmin):
 
     def get_inline_instances(self, request, obj=None):
         if not obj:
-            return super(ProjectAdmin, self).get_inline_instances(request, obj)
-        return list()
+            return super().get_inline_instances(request, obj)
+        return []
 
 
 admin.site.register(Project, ProjectAdmin)

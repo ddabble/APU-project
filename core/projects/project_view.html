@@ -29,7 +29,7 @@
                         <div class="task">
                             <h4>{{ task.title }}</h4>
                             <p>Budget: {{ task.budget }} </p>
-                            <p>Description: <br> {{ task.description }}</p>
+                            <p>Description: <br/> {{ task.description }}</p>
                         </div>
                     {% endfor %}
                 </div>
@@ -66,9 +66,9 @@
                                             <h3>Offer</h3>
                                             <h4 class="mt-3">{{ task_accepted_offer.title }}</h4>
                                             <p>Status: {{ task_accepted_offer.get_status_display }}</p>
-                                            <p>Description: <br> {{ task_accepted_offer.description }}</p>
+                                            <p>Description: <br/> {{ task_accepted_offer.description }}</p>
                                             <p>Price offered: {{ task_accepted_offer.price }} </p>
-                                            <p class="mt-2">Feedback given: <br> {{ task_accepted_offer.feedback }}</p>
+                                            <p class="mt-2">Feedback given: <br/> {{ task_accepted_offer.feedback }}</p>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -106,13 +106,13 @@
                                                     <h3>Offer</h3>
                                                     <h4 class="mt-3">{{ task_offer.title }}</h4>
                                                     <p>Status: {{ task_offer.get_status_display }}</p>
-                                                    <p>Description: <br> {{ task_offer.description }}</p>
+                                                    <p>Description: <br/> {{ task_offer.description }}</p>
                                                     <p>Price offered: {{ task_offer.price }} </p>
 
                                                     <h3 class="mt-3">Response: </h3>
                                                     {% csrf_token %}
                                                     {% bootstrap_form offer_response_form %}
-                                                    <input type="hidden" name="taskofferid" value="{{ task_offer.id }}">
+                                                    <input type="hidden" name="taskofferid" value="{{ task_offer.id }}"/>
 
                                                 </div>
                                                 <div class="modal-footer">
@@ -178,7 +178,7 @@
                         <div class="task">
                             <h4>{{ task.title }}</h4>
                             <p>Budget: {{ task.budget }} </p>
-                            <p>Description: <br> {{ task.description }}</p>
+                            <p>Description: <br/> {{ task.description }}</p>
                         </div>
                     {% endfor %}
                 </div>
@@ -216,17 +216,17 @@
                                                     <h3>Last Offer</h3>
                                                     <h4 class="mt-3">{{ offer.title }}</h4>
                                                     <p>Status: {{ offer.get_status_display }}</p>
-                                                    <p>Description: <br> {{ offer.description }}</p>
+                                                    <p>Description: <br/> {{ offer.description }}</p>
                                                     <p>Price offered: {{ offer.price }}</p>
                                                     {% if offer.status == 'a' or offer.status == 'd' %}
-                                                        <p class="mt-2">Feedback from project owner: <br> {{ offer.feedback }}</p>
+                                                        <p class="mt-2">Feedback from project owner: <br/> {{ offer.feedback }}</p>
                                                     {% endif %}
 
                                                     {% if offer.status == 'd' %}
                                                         <h3 class="mt-3">Make New Offer</h3>
                                                         {% csrf_token %}
                                                         {% bootstrap_form task_offer_form %}
-                                                        <input type="hidden" name="taskvalue" value="{{ task.id }}">
+                                                        <input type="hidden" name="taskvalue" value="{{ task.id }}"/>
                                                     {% endif %}
                                                 </div>
                                                 <div class="modal-footer">
@@ -262,7 +262,7 @@
                                             <div class="modal-body">
                                                 {% csrf_token %}
                                                 {% bootstrap_form task_offer_form %}
-                                                <input type="hidden" name="taskvalue" value="{{ task.id }}">
+                                                <input type="hidden" name="taskvalue" value="{{ task.id }}"/>
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
