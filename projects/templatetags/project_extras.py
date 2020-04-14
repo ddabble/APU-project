@@ -34,8 +34,8 @@ def modify(per):
 
 
 @register.filter
-def id(per):
-    return per.id if per else None
+def obj_id(obj):
+    return obj.id if obj else None
 
 
 @register.simple_tag
