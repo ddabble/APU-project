@@ -114,10 +114,9 @@ def get_user_task_statuses(project, user):
     declined_delivery = 0
 
     tasks = project.tasks.all()
-
     for task in tasks:
         try:
-            task_offer = task.offers.get(status='a')
+            task_offer = task.offers.get(status=TaskOffer.ACCEPTED)
             if task_offer.offerer == user.profile:
                 if task.status == Task.AWAITING_DELIVERY:
                     awaiting_delivery += 1

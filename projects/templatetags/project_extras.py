@@ -64,7 +64,7 @@ def get_all_taskoffers(task):
 def get_accepted_task_offer(task):
     task_offer = None
     try:
-        task_offer = task.offers.get(status='a')
+        task_offer = task.offers.get(status=TaskOffer.ACCEPTED)
     except TaskOffer.DoesNotExist:
         pass
 

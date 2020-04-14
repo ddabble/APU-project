@@ -138,7 +138,7 @@ class Task(models.Model):
     def accepted_task_offer(self):
         task_offer = None
         try:
-            task_offer = self.offers.get(status='a')
+            task_offer = self.offers.get(status=TaskOffer.ACCEPTED)
         except TaskOffer.DoesNotExist:
             pass
         return task_offer
