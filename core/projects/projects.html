@@ -52,7 +52,7 @@
                         <h3 class="mb-3 mt-5">{{ project_category }}</h3>
                         <div class="row projects-view">
                             {% for project in projects %}
-                                {% if project.status == project.OPEN and project.category.id == project_category.id %}
+                                {% if project.status == Project.OPEN and project.category.id == project_category.id %}
                                     <a class="open-project-view-item" href="{% url 'project_view' project_id=project.id %}">
                                         <div class="col-md mb-3 ml-3 mr-3 mt-3 project-box-style">
                                             <div class="media">

@@ -62,6 +62,7 @@ def projects(request):
         'project_categories': ProjectCategory.objects.all(),
         'sorting_form':       sorting_form,
         'filtering_form':     filtering_form,
+        'Project':            Project,
     })
 
 
@@ -160,7 +161,7 @@ def project_view(request, project_id):
             if offer_response_form.is_valid():
                 offer_response = offer_response_form.save(commit=False)
 
-                if offer_response.status == 'a':
+                if offer_response.status == TaskOffer.ACCEPTED:
                     offer_response.task.read.add(offer_response.offerer)
                     offer_response.task.write.add(offer_response.offerer)
                     project = offer_response.task.project
@@ -182,6 +183,8 @@ def project_view(request, project_id):
             'tasks':               tasks,
             'status_form':         status_form,
             'offer_response_form': offer_response_form,
+            'Project':             Project,
+            'TaskOffer':           TaskOffer,
         })
 
     else:
@@ -198,6 +201,8 @@ def project_view(request, project_id):
             'project':         project,
             'tasks':           tasks,
             'task_offer_form': task_offer_form,
+            'Project':         Project,
+            'TaskOffer':       TaskOffer,
         })
 
 
@@ -307,7 +312,7 @@ def task_view(request, project_id, task_id):
                 delivery.task = task
                 delivery.delivery_user = user.profile
                 delivery.save()
-                task.status = "pa"
+                task.status = Task.PENDING_ACCEPTANCE
                 task.save()
 
     if request.method == 'POST' and 'delivery-response' in request.POST:
@@ -320,11 +325,11 @@ def task_view(request, project_id, task_id):
             delivery.responding_user = user.profile
             delivery.save()
 
-            if delivery.status == 'a':
-                task.status = "pp"
+            if delivery.status == Delivery.ACCEPTED:
+                task.status = Task.PENDING_PAYMENT
                 task.save()
-            elif delivery.status == 'd':
-                task.status = "dd"
+            elif delivery.status == Delivery.DECLINED:
+                task.status = Task.DECLINED_DELIVERY
                 task.save()
 
     if request.method == 'POST' and 'team' in request.POST:
@@ -393,6 +398,8 @@ def task_view(request, project_id, task_id):
             'team_add_form':         team_add_form,
             'team_files':            team_files,
             'per':                   per,
+            'Task':                  Task,
+            'Delivery':              Delivery,
         })
 
     return redirect('/user/login')

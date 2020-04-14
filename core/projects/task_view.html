@@ -262,7 +262,7 @@
                 {{ delivery.feedback }}
             </div>
             <h4> Status: {{ delivery.get_status_display }}</h4>
-            {% if user_permissions.owner and delivery.status == 'p' %}
+            {% if user_permissions.owner and delivery.status == Delivery.PENDING %}
                 <div>
                 <div>
                 <button class="btn btn-primary" data-toggle="modal" data-target="#seeAcceptDeliveryModal">Respond</button>
@@ -299,7 +299,7 @@
     </div>
     {% endif %}
     {% if user == task_accepted_offer.offerer.user %}
-        {% if task.status == 'ad' or task.status == 'dd' %}
+        {% if task.status == Task.AWAITING_DELIVERY or task.status == Task.DECLINED_DELIVERY %}
             <div>
             <div>
             <button class="btn btn-primary" data-toggle="modal" data-target="#seeDeliverModal">Deliver</button>
@@ -333,13 +333,13 @@
 
     <div>
         {% if user == project.user_profile.user %}
-            {% if task.status == task.PAYMENT_SENT %}
+            {% if task.status == Task.PAYMENT_SENT %}
                 <a class="btn btn-primary" role="button" href="{% url 'receipt' project_id=project.id task_id=task.id %}">See receipt</a>
-            {% elif task.status == task.PENDING_PAYMENT %}
+            {% elif task.status == Task.PENDING_PAYMENT %}
                 <a class="btn btn-primary" role="button" href="{% url 'payment' project_id=project.id task_id=task.id %}">Pay</a>
             {% endif %}
         {% elif user == task_accepted_offer.offerer.user %}
-            {% if task.status == task.PAYMENT_SENT %}
+            {% if task.status == Task.PAYMENT_SENT %}
                 <a class="btn btn-primary" role="button" href="{% url 'receipt' project_id=project.id task_id=task.id %}">See receipt</a>
             {% endif %}
         {% endif %}

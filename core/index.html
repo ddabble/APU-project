@@ -56,7 +56,7 @@
                         <div class="list-group" id="open-projects">
                             {% define "You don't have any open requests" as project_container_status %}
                             {% for project in user_projects %}
-                                {% if project.status == project.OPEN %}
+                                {% if project.status == Project.OPEN %}
                                     {% define "" as project_container_status %}
 
                                     <a href="{% url 'project_view' project_id=project.id %}"
@@ -91,7 +91,7 @@
                         <div class="list-group" id="closed-projects">
                             {% define "You don't have any projects in progress" as project_container_status %}
                             {% for project in user_projects %}
-                                {% if project.status == project.INPROG %}
+                                {% if project.status == Project.INPROG %}
                                     {% define "" as project_container_status %}
                                     <a href="{% url 'project_view' project_id=project.id %}"
                                        class="list-group-item list-group-item-action flex-column align-items-start my-1">
@@ -137,7 +137,7 @@
                         <div class="list-group" id="closed-projects">
                             {% define "You don't have any costumer projects in progress" as project_container_status %}
                             {% for project in customer_projects %}
-                                {% if project.status == project.INPROG %}
+                                {% if project.status == Project.INPROG %}
                                     {% define "" as project_container_status %}
                                     <a href="{% url 'project_view' project_id=project.id %}"
                                        class="list-group-item list-group-item-action flex-column align-items-start my-1">
@@ -198,7 +198,7 @@
                         <div class="list-group" id="closed-projects">
                             {% define "You don't have any customer projects in progress" as project_container_status %}
                             {% for project in given_offers_projects %}
-                                {% if project.status == project.OPEN %}
+                                {% if project.status == Project.OPEN %}
                                     {% define "" as project_container_status %}
                                     <a href="{% url 'project_view' project_id=project.id %}"
                                        class="list-group-item list-group-item-action flex-column align-items-start my-1">
@@ -259,7 +259,7 @@
                         <div class="list-group" id="finished-own-projects">
                             {% define "You don't have any finished own projects" as project_container_status %}
                             {% for project in user_projects %}
-                                {% if project.status == project.FINISHED %}
+                                {% if project.status == Project.FINISHED %}
                                     {% define "" as project_container_status %}
                                     <a href="{% url 'project_view' project_id=project.id %}"
                                        class="list-group-item list-group-item-action flex-column align-items-start my-1">
@@ -284,7 +284,7 @@
                         <div class="list-group" id="finished-costumer-projects">
                             {% define "You don't have any finished customer projects" as project_container_status %}
                             {% for project in customer_projects %}
-                                {% if project.status == project.FINISHED %}
+                                {% if project.status == Project.FINISHED %}
                                     {% define "" as project_container_status %}
                                     <a href="{% url 'project_view' project_id=project.id %}"
                                        class="list-group-item list-group-item-action flex-column align-items-start my-1">

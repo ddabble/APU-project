@@ -97,7 +97,7 @@ def offers(task):
         msg = "You have "
         for t in task_offers:
             x += 1
-            if t.status == 'a':
+            if t.status == TaskOffer.ACCEPTED:
                 return "You have accepted an offer for this task"
         msg += f"{x} pending offers"
     return msg

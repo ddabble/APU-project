@@ -21,6 +21,7 @@ def home(request):
             'customer_projects':      customer_projects,
             'given_offers_projects':  given_offers_projects,
             'num_category_proposals': ProjectCategoryProposal.objects.count(),
+            'Project':                Project,
         })
     else:
         return redirect('projects')
