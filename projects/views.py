@@ -209,7 +209,6 @@ def upload_file_to_task(request, project_id, task_id):
     project = Project.objects.get(pk=project_id)
     task = Task.objects.get(pk=task_id)
     user_permissions = get_user_task_permissions(request.user, task)
-    accepted_task_offer = task.accepted_task_offer()
 
     if user_permissions['modify'] or user_permissions['write'] or user_permissions['upload'] or is_project_owner(request.user, project):
         if request.method == 'POST':
@@ -229,7 +228,7 @@ def upload_file_to_task(request, project_id, task_id):
                         existing_file.delete()
                     task_file.save()
 
-                    if request.user.profile != project.user_profile and request.user.profile != accepted_task_offer.offerer:
+                    if request.user.profile != project.user_profile and request.user.profile != task.accepted_task_offer.offerer:
                         teams = request.user.profile.teams.filter(task__id=task.id)
                         for team in teams:
                             tft = TaskFileTeam()
@@ -261,7 +260,7 @@ def get_user_task_permissions(user, task):
             'owner':  True,
             'upload': True,
         }
-    if task.accepted_task_offer() and task.accepted_task_offer().offerer == user.profile:
+    if task.accepted_task_offer and task.accepted_task_offer.offerer == user.profile:
         return {
             'write':  True,
             'read':   True,
@@ -293,7 +292,7 @@ def task_view(request, project_id, task_id):
     user = request.user
     project = Project.objects.get(pk=project_id)
     task = Task.objects.get(pk=task_id)
-    accepted_task_offer = task.accepted_task_offer()
+    accepted_task_offer = task.accepted_task_offer
 
     user_permissions = get_user_task_permissions(request.user, task)
     if not user_permissions['read'] and not user_permissions['write'] and not user_permissions['modify'] \
@@ -403,8 +402,7 @@ def task_permissions(request, project_id, task_id):
     user = request.user
     task = Task.objects.get(pk=task_id)
     project = Project.objects.get(pk=project_id)
-    accepted_task_offer = task.accepted_task_offer()
-    if project.user_profile == request.user.profile or user == accepted_task_offer.offerer.user:
+    if project.user_profile == request.user.profile or user == task.accepted_task_offer.offerer.user:
         task = Task.objects.get(pk=task_id)
         if int(project_id) == task.project.id:
             if request.method == 'POST':

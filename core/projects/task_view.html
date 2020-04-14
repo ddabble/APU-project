@@ -7,7 +7,7 @@
 {% block title %}Task{% endblock %}
 
 {% block content %}
-    {% define task|get_accepted_task_offer as task_accepted_offer %}
+    {% define task.accepted_task_offer as task_accepted_offer %}
     <h3 class="my-3">{{ task.title }}</h3>
     <p>Task status: {{ task.get_status_display }}</p>
     <p>Solver: {{ task_accepted_offer.offerer.user.username }}</p>

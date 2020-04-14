@@ -38,8 +38,8 @@
                     {% define task|get_all_taskoffers as task_offers %}
 
 
-                    {% if task|get_accepted_task_offer %}
-                        {% define task|get_accepted_task_offer as task_accepted_offer %}
+                    {% if task.accepted_task_offer %}
+                        {% define task.accepted_task_offer as task_accepted_offer %}
 
                         <h3 class="my-3">Accepted offer for <i>{{ task.title }}</i></h3>
 
@@ -137,7 +137,7 @@
                 <h3 class="mb-3 mt-5">List of Tasks</h3>
                 <div class="list-group">
                     {% for task in tasks %}
-                        {% define task|get_accepted_task_offer as task_accepted_offer %}
+                        {% define task.accepted_task_offer as task_accepted_offer %}
                         <a href="{% url 'task_view' project_id=project.id task_id=task.id %}"
                            class="list-group-item list-group-item-action flex-column align-items-start my-1">
                             <div class="d-flex w-100 justify-content-between align-items-center">

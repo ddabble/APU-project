@@ -1,8 +1,6 @@
 from django import template
 from django.contrib.auth.models import User
 
-from ..models import TaskOffer
-
 register = template.Library()
 
 
@@ -58,17 +56,6 @@ def check_taskoffers(task, user):
 def get_all_taskoffers(task):
     taskoffers = task.offers.all()
     return taskoffers
-
-
-@register.filter
-def get_accepted_task_offer(task):
-    task_offer = None
-    try:
-        task_offer = task.offers.get(status=TaskOffer.ACCEPTED)
-    except TaskOffer.DoesNotExist:
-        pass
-
-    return task_offer
 
 
 @register.filter

@@ -135,6 +135,7 @@ class Task(models.Model):
     def __str__(self):
         return f"{self.id} {self.title}"
 
+    @property
     def accepted_task_offer(self):
         task_offer = None
         try:

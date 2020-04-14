@@ -65,7 +65,7 @@ class ProjectViewTests(ProjectTestCase):
         task_offer = self.project_manager.profile.task_offers.get()  # will raise exception if more than 1
 
         self.assertNotEqual(task_offer.status, TaskOffer.ACCEPTED)
-        self.assertIsNone(task.accepted_task_offer())
+        self.assertIsNone(task.accepted_task_offer)
         self.assertEqual(task.read.count(), 0)
         self.assertEqual(task.write.count(), 0)
         self.assertEqual(task.modify.count(), 0)
@@ -79,7 +79,7 @@ class ProjectViewTests(ProjectTestCase):
 
         self.assertEqual(task_offer.status, TaskOffer.ACCEPTED)
         self.assertEqual(task_offer.feedback, customer_feedback)
-        self.assertEqual(task.accepted_task_offer(), task_offer)
+        self.assertEqual(task.accepted_task_offer, task_offer)
         self.assertEqual(task.read.get(), self.project_manager.profile)  # get() will raise exception if more than 1
         self.assertEqual(task.write.get(), self.project_manager.profile)  # get() will raise exception if more than 1
         self.assertEqual(task.modify.count(), 0)

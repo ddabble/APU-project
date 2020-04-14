@@ -1,7 +1,6 @@
 from django.shortcuts import redirect, render
 
 from projects.models import Project, Task
-from projects.templatetags.project_extras import get_accepted_task_offer
 from .forms import PaymentForm
 from .models import Payment
 
@@ -9,7 +8,7 @@ from .models import Payment
 def payment(request, project_id, task_id):
     task = Task.objects.get(pk=task_id)
     sender = Project.objects.get(pk=project_id).user_profile
-    receiver = get_accepted_task_offer(task).offerer
+    receiver = task.accepted_task_offer.offerer
 
     if request.method == 'POST':
         payment = Payment(payer=sender, receiver=receiver, task=task)
@@ -26,7 +25,7 @@ def payment(request, project_id, task_id):
 def receipt(request, project_id, task_id):
     project = Project.objects.get(pk=project_id)
     task = Task.objects.get(pk=task_id)
-    taskoffer = get_accepted_task_offer(task)
+    taskoffer = task.accepted_task_offer
 
     return render(request, 'payment/receipt.html', {
         'project':   project,
