@@ -1,6 +1,9 @@
-from django import template
+from typing import Collection
 
-from projects.models import Task, TaskOffer
+from django import template
+from django.contrib.auth.models import User
+
+from projects.models import Project, Task, TaskOffer
 
 register = template.Library()
 
@@ -52,7 +55,16 @@ def task_status(task):
 
 
 @register.filter
-def get_task_statuses(project):
+def get_task_statuses(project: Project):
+    return _get_status_counts(project.tasks.all())
+
+
+@register.filter
+def get_user_task_statuses(project: Project, user: User):
+    return _get_status_counts(project.tasks.filter(offers__offerer=user.profile, offers__status=TaskOffer.ACCEPTED))
+
+
+def _get_status_counts(tasks: Collection[Task]):
     task_statuses = {}
 
     awaiting_delivery = 0
@@ -61,7 +73,6 @@ def get_task_statuses(project):
     payment_sent = 0
     declined_delivery = 0
 
-    tasks = project.tasks.all()
     for task in tasks:
         if task.status == Task.AWAITING_DELIVERY:
             awaiting_delivery += 1
@@ -101,41 +112,3 @@ def offers(task):
                 return "You have accepted an offer for this task"
         msg += f"{x} pending offers"
     return msg
-
-
-@register.filter
-def get_user_task_statuses(project, user):
-    task_statuses = {}
-
-    awaiting_delivery = 0
-    pending_acceptance = 0
-    pending_payment = 0
-    payment_sent = 0
-    declined_delivery = 0
-
-    tasks = project.tasks.all()
-    for task in tasks:
-        try:
-            task_offer = task.offers.get(status=TaskOffer.ACCEPTED)
-            if task_offer.offerer == user.profile:
-                if task.status == Task.AWAITING_DELIVERY:
-                    awaiting_delivery += 1
-                elif task.status == Task.PENDING_ACCEPTANCE:
-                    pending_acceptance += 1
-                elif task.status == Task.PENDING_PAYMENT:
-                    pending_payment += 1
-                elif task.status == Task.PAYMENT_SENT:
-                    payment_sent += 1
-                elif task.status == Task.DECLINED_DELIVERY:
-                    declined_delivery += 1
-
-        except TaskOffer.DoesNotExist:
-            pass
-
-    task_statuses['awaiting_delivery'] = awaiting_delivery
-    task_statuses['pending_acceptance'] = pending_acceptance
-    task_statuses['pending_payment'] = pending_payment
-    task_statuses['payment_sent'] = payment_sent
-    task_statuses['declined_delivery'] = declined_delivery
-
-    return task_statuses
