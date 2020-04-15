@@ -74,7 +74,7 @@ class Project(models.Model):
         (INPROG, 'In progress'),
         (FINISHED, 'Finished'),
     )
-    status = models.CharField(max_length=11, choices=STATUS_CHOICES, default=OPEN)
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=OPEN)
 
     @property
     def num_tasks(self):
@@ -116,7 +116,7 @@ class Task(models.Model):
         (DECLINED_DELIVERY, 'Declined delivery, please revise'),
     )
 
-    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default=AWAITING_DELIVERY)
+    status = models.CharField(max_length=2, choices=STATUS_CHOICES, default=AWAITING_DELIVERY)
     feedback = models.TextField(max_length=500, default="")
 
     read = models.ManyToManyField(
@@ -228,7 +228,7 @@ class Delivery(models.Model):
         (PENDING, 'Pending'),
         (DECLINED, 'Declined'),
     )
-    status = models.CharField(max_length=8, choices=STATUS_CHOICES, default=PENDING)
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=PENDING)
     feedback = models.TextField(max_length=500)
 
 
@@ -255,7 +255,7 @@ class TaskOffer(models.Model):
         (PENDING, 'Pending'),
         (DECLINED, 'Declined'),
     )
-    status = models.CharField(max_length=8, choices=STATUS_CHOICES, default=PENDING)
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=PENDING)
     feedback = models.TextField(max_length=500)
 
     def calculate_average_task_offer(self):
