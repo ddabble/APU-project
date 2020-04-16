@@ -83,7 +83,7 @@
                         <p>Accepting one offer will remove all other pending offers.</p>
 
                         {% for task_offer in task_offers %}
-                            {% if not task_offer.status == TaskOffer.DECLINED %}
+                            {% if task_offer.status != TaskOffer.DECLINED %}
                                 <li class="list-group-item d-flex justify-content-between align-items-center"> Offer from {{ task_offer.offerer.user.username }}
                                     <p>Status: {{ task_offer.get_status_display }}</p>
                                     <div>

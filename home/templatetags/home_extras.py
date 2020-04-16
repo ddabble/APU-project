@@ -9,7 +9,7 @@ register = template.Library()
 
 
 @register.filter
-def check_nr_pending_offers(project):
+def check_nr_pending_offers(project: Project):
     pending_offers = 0
     tasks = project.tasks.all()
     for task in tasks:
@@ -21,7 +21,7 @@ def check_nr_pending_offers(project):
 
 
 @register.filter
-def check_nr_user_offers(project, user):
+def check_nr_user_offers(project: Project, user: User):
     offers = {}
     pending_offers = 0
     declined_offers = 0
@@ -96,12 +96,12 @@ def _get_status_counts(tasks: Collection[Task]):
 
 
 @register.filter
-def all_tasks(project):
+def all_tasks(project: Project):
     return project.tasks.all()
 
 
 @register.filter
-def offers(task):
+def offers(task: Task):
     task_offers = task.offers.all()
     msg = "No offers"
     if task_offers:

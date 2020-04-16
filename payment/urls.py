@@ -4,6 +4,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('<project_id>/<task_id>', login_required(views.payment), name='payment'),
-    path('<project_id>/<task_id>/receipt/', login_required(views.receipt), name='receipt'),
+    path('<int:project_id>/<int:task_id>', login_required(views.payment), name='payment'),
+    path('<int:project_id>/<int:task_id>/receipt/', login_required(views.receipt), name='receipt'),
 ]

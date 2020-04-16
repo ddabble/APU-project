@@ -1,9 +1,13 @@
 from http import HTTPStatus
 
 import django.views.generic as django_views
+from django.contrib import messages
+from django.contrib.sites.shortcuts import get_current_site
+from django.core import mail
 from django.db.models import Count, Sum
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 
 from user.models import Profile
 from .forms import DeliveryForm, ProjectCategoryProposalForm, ProjectFilteringForm, ProjectForm, ProjectSortingForm, ProjectStatusForm, \
@@ -66,7 +70,6 @@ def projects(request):
 
 
 def new_project(request):
-    from django.contrib.sites.shortcuts import get_current_site
     current_site = get_current_site(request)
     if request.method == 'POST':
         form = ProjectForm(request.POST)
@@ -77,7 +80,6 @@ def new_project(request):
             project.save()
 
             people = Profile.objects.filter(competence_categories__id=project.category.id).exclude(user=request.user)  # do not send email to creator
-            from django.core import mail
             for person in people:
                 if person.user.email:
                     try:
@@ -90,7 +92,6 @@ def new_project(request):
                                 connection=connection,
                             ).send()
                     except Exception as e:
-                        from django.contrib import messages
                         messages.success(request, f"Sending of email to {person.user.email} failed: {e}")
 
             task_title = request.POST.getlist('task_title')
@@ -240,7 +241,6 @@ def upload_file_to_task(request, project_id, task_id):
                             tft.read = True
                             tft.save()
                 else:
-                    from django.contrib import messages
                     messages.warning(request, "You do not have access to modify this file")
 
                 return redirect('task_view', project_id=project_id, task_id=task_id)
@@ -318,7 +318,6 @@ def task_view(request, project_id, task_id):
         deliver_response_form = TaskDeliveryResponseForm(request.POST, instance=instance)
         if deliver_response_form.is_valid():
             delivery = deliver_response_form.save()
-            from django.utils import timezone
             delivery.responding_time = timezone.now()
             delivery.responding_user = user.profile
             delivery.save()
@@ -365,7 +364,7 @@ def task_view(request, project_id, task_id):
                     instance.write = request.POST.get(f'permission-write-{f.id}-{t.id}') or False
                     instance.modify = request.POST.get(f'permission-modify-{f.id}-{t.id}') or False
                     instance.save()
-                t.write = request.POST.get(f'permission-upload-{str(t.id)}') or False
+                t.write = request.POST.get(f'permission-upload-{t.id}') or False
                 t.save()
 
     deliver_form = DeliveryForm()
@@ -377,7 +376,7 @@ def task_view(request, project_id, task_id):
             or user_permissions['owner'] or user_permissions['view_task']:
         deliveries = task.deliveries.all()
         team_files = []
-        teams = user.profile.teams.filter(task__id=task.id).all()
+        teams = user.profile.teams.filter(task__id=task.id)
         per = {}
         for f in task.files.all():
             per[f.name()] = {}
@@ -409,7 +408,7 @@ def task_permissions(request, project_id, task_id):
     project = Project.objects.get(pk=project_id)
     if project.user_profile == request.user.profile or user == task.accepted_task_offer.offerer.user:
         task = Task.objects.get(pk=task_id)
-        if int(project_id) == task.project.id:
+        if project_id == task.project.id:
             if request.method == 'POST':
                 task_permission_form = TaskPermissionForm(request.POST)
                 if task_permission_form.is_valid():

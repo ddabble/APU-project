@@ -63,7 +63,7 @@
                                        class="list-group-item list-group-item-action flex-column align-items-start my-1">
                                         <div class="d-flex w-100 justify-content-between align-items-center">
                                             <h5 class="mb-1">{% icon 'unlock-alt' %} {{ project.title }}</h5>
-                                            {% if not project|check_nr_pending_offers == 0 %}
+                                            {% if project|check_nr_pending_offers %}
                                                 <span class="badge badge-warning badge-pill">{{ project|check_nr_pending_offers }}</span>
                                             {% endif %}
                                         </div>
@@ -101,13 +101,13 @@
                                             {% define project|get_task_statuses as task_statuses %}
 
                                             <div>
-                                                {% if not task_statuses.pending_acceptance == 0 %}
+                                                {% if task_statuses.pending_acceptance %}
                                                     <span class="badge badge-secondary badge-pill">{{ task_statuses.pending_acceptance }}</span>
                                                 {% endif %}
-                                                {% if not task_statuses.pending_payment == 0 %}
+                                                {% if task_statuses.pending_payment %}
                                                     <span class="badge badge-warning badge-pill">{{ task_statuses.pending_payment }}</span>
                                                 {% endif %}
-                                                {% if not task_statuses.payment_sent == 0 %}
+                                                {% if task_statuses.payment_sent %}
                                                     <span class="badge badge-success badge-pill">{{ task_statuses.payment_sent }}</span>
                                                 {% endif %}
                                             </div>
@@ -147,13 +147,13 @@
                                             {% define project|get_user_task_statuses:user as user_task_statuses %}
 
                                             <div>
-                                                {% if not user_task_statuses.pending_acceptance == 0 %}
+                                                {% if user_task_statuses.pending_acceptance %}
                                                     <span class="badge badge-secondary badge-pill">{{ user_task_statuses.pending_acceptance }}</span>
                                                 {% endif %}
-                                                {% if not user_task_statuses.pending_payment == 0 %}
+                                                {% if user_task_statuses.pending_payment %}
                                                     <span class="badge badge-warning badge-pill">{{ user_task_statuses.pending_payment }}</span>
                                                 {% endif %}
-                                                {% if not user_task_statuses.payment_sent == 0 %}
+                                                {% if user_task_statuses.payment_sent %}
                                                     <span class="badge badge-success badge-pill">{{ user_task_statuses.payment_sent }}</span>
                                                 {% endif %}
                                             </div>
@@ -162,25 +162,25 @@
                                         <div class="d-flex text-left">
                                             <img class="mt-1 project-image" src="{% static 'img/idea.jpg' %}" alt="Generic placeholder image."/>
                                             <ul class="mb-1 ml-5 task-list">
-                                                {% if not user_task_statuses.awaiting_delivery == 0 %}
+                                                {% if user_task_statuses.awaiting_delivery %}
                                                     <li>Waiting for your delivery</li>
                                                 {% endif %}
 
                                                 {% if user_task_statuses.pending_acceptance == 1 %}
                                                     <li>You have one delivery waiting for acceptance</li>
-                                                {% elif not user_task_statuses.pending_acceptance == 0 %}
+                                                {% elif user_task_statuses.pending_acceptance %}
                                                     <li>You have deliveries waiting for acceptance</li>
                                                 {% endif %}
 
                                                 {% if user_task_statuses.pending_payment == 1 %}
                                                     <li>You have one delivery waiting for payment</li>
-                                                {% elif not user_task_statuses.pending_payment == 0 %}
+                                                {% elif user_task_statuses.pending_payment %}
                                                     <li>You have deliveries waiting for payment</li>
                                                 {% endif %}
 
                                                 {% if user_task_statuses.payment_sent == 1 %}
                                                     <li>You have received one payment</li>
-                                                {% elif not user_task_statuses.payment_sent == 0 %}
+                                                {% elif user_task_statuses.payment_sent %}
                                                     <li>You have received payments for deliveries</li>
                                                 {% endif %}
                                             </ul>
@@ -207,13 +207,13 @@
 
                                             {% define project|check_nr_user_offers:user as offers %}
                                             <div>
-                                                {% if not offers.declined == 0 %}
+                                                {% if offers.declined %}
                                                     <span class="badge badge-danger badge-pill">{{ offers.declined }}</span>
                                                 {% endif %}
-                                                {% if not offers.pending == 0 %}
+                                                {% if offers.pending %}
                                                     <span class="badge badge-warning badge-pill">{{ offers.pending }}</span>
                                                 {% endif %}
-                                                {% if not offers.accepted == 0 %}
+                                                {% if offers.accepted %}
                                                     <span class="badge badge-success badge-pill">{{ offers.accepted }}</span>
                                                 {% endif %}
                                             </div>
@@ -224,19 +224,19 @@
                                             <ul class="mb-1 ml-5 task-list">
                                                 {% if offers.declined == 1 %}
                                                     <li>You have one declined offer</li>
-                                                {% elif not offers.declined == 0 %}
+                                                {% elif offers.declined %}
                                                     <li>You have declined offers</li>
                                                 {% endif %}
 
                                                 {% if offers.pending == 1 %}
                                                     <li>You have one pending offer</li>
-                                                {% elif not offers.pending == 0 %}
+                                                {% elif offers.pending %}
                                                     <li>You have pending offers</li>
                                                 {% endif %}
 
                                                 {% if offers.accepted == 1 %}
                                                     <li>You have one accepted offer</li>
-                                                {% elif not offers.accepted == 0 %}
+                                                {% elif offers.accepted %}
                                                     <li>You have accepted offers</li>
                                                 {% endif %}
                                             </ul>
