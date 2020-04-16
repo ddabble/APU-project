@@ -1,7 +1,6 @@
 from http import HTTPStatus
 
 import django.views.generic as django_views
-from django.contrib.auth.models import User
 from django.db.models import Count, Sum
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
@@ -353,11 +352,11 @@ def task_view(request, project_id, task_id):
         if accepted_task_offer and accepted_task_offer.offerer == user.profile:
             for t in task.teams.all():
                 for f in task.files.all():
+                    tft_string = f'permission-perobj-{f.id}-{t.id}'
+                    tft_id = request.POST.get(tft_string)
                     try:
-                        tft_string = f'permission-perobj-{f.id}-{t.id}'
-                        tft_id = request.POST.get(tft_string)
                         instance = TaskFileTeam.objects.get(id=tft_id)
-                    except Exception as e:
+                    except TaskFileTeam.DoesNotExist:
                         instance = TaskFileTeam(
                             file=f,
                             team=t,
@@ -415,18 +414,14 @@ def task_permissions(request, project_id, task_id):
             if request.method == 'POST':
                 task_permission_form = TaskPermissionForm(request.POST)
                 if task_permission_form.is_valid():
-                    try:
-                        username = task_permission_form.cleaned_data['user']
-                        user = User.objects.get(username=username)
-                        permission_type = task_permission_form.cleaned_data['permission']
-                        if permission_type == 'Read':
-                            task.read.add(user.profile)
-                        elif permission_type == 'Write':
-                            task.write.add(user.profile)
-                        elif permission_type == 'Modify':
-                            task.modify.add(user.profile)
-                    except Exception:
-                        print("user not found")
+                    user = task_permission_form.cleaned_data['user']
+                    permission_type = task_permission_form.cleaned_data['permission']
+                    if permission_type == 'Read':
+                        task.read.add(user.profile)
+                    elif permission_type == 'Write':
+                        task.write.add(user.profile)
+                    elif permission_type == 'Modify':
+                        task.modify.add(user.profile)
                     return redirect('task_view', project_id=project_id, task_id=task_id)
 
             task_permission_form = TaskPermissionForm()
