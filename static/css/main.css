@@ -39,9 +39,9 @@
     width: 50px;
 }
 
-.offerer-taskoffer-status {
+.task-list {
     list-style-type: none;
-
+    text-align: initial;
 }
 
 .new-task-input {

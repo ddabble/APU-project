@@ -71,9 +71,9 @@
                                             <img class="mt-1 project-image" src="{% static 'img/idea.jpg' %}" alt="Generic placeholder image."/>
 
                                             <span class="mb-1 ml-5">
-                                                <ul>
+                                                <ul class="task-list">
                                                   {% for task in project|all_tasks %}
-                                                      {{ task.title }} - {{ task|offers }}
+                                                      <li>{{ task.title }} - {{ task|offers }}</li>
                                                   {% endfor %}
                                                 </ul>
                                             </span>
@@ -115,9 +115,9 @@
                                         </div>
                                         <div class="d-flex text-left">
                                             <img class="mt-1 project-image" src="{% static 'img/idea.jpg' %}" alt="Generic placeholder image."/>
-                                            <ul class="mb-1 ml-5 offerer-taskoffer-status">
+                                            <ul class="mb-1 ml-5 task-list">
                                                 {% for task in project|all_tasks %}
-                                                    {{ task.title }} - {{ task|task_status }}
+                                                    <li>{{ task.title }} - {{ task|task_status }}</li>
                                                 {% endfor %}
                                             </ul>
                                         </div>
@@ -161,7 +161,7 @@
                                         </div>
                                         <div class="d-flex text-left">
                                             <img class="mt-1 project-image" src="{% static 'img/idea.jpg' %}" alt="Generic placeholder image."/>
-                                            <ul class="mb-1 ml-5 offerer-taskoffer-status">
+                                            <ul class="mb-1 ml-5 task-list">
                                                 {% if not user_task_statuses.awaiting_delivery == 0 %}
                                                     <li>Waiting for your delivery</li>
                                                 {% endif %}
@@ -221,7 +221,7 @@
                                         </div>
                                         <div class="d-flex text-left">
                                             <img class="mt-1 project-image" src="{% static 'img/idea.jpg' %}" alt="Generic placeholder image."/>
-                                            <ul class="mb-1 ml-5 offerer-taskoffer-status">
+                                            <ul class="mb-1 ml-5 task-list">
                                                 {% if offers.declined == 1 %}
                                                     <li>You have one declined offer</li>
                                                 {% elif not offers.declined == 0 %}
