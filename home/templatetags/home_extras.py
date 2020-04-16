@@ -44,14 +44,15 @@ def check_nr_user_offers(project, user):
 
 
 @register.filter
-def task_status(task):
-    if task.status == Task.PENDING_ACCEPTANCE:
-        return "You have deliveries waiting for acceptance"
-    elif task.status == Task.PENDING_PAYMENT:
-        return "You have deliveries waiting for payment"
-    elif task.status == Task.PAYMENT_SENT:
-        return "You have sent payment"
-    return "You are awaiting delivery"
+def task_status(task: Task):
+    status_dict = {
+        Task.AWAITING_DELIVERY:  "You are awaiting delivery",
+        Task.PENDING_ACCEPTANCE: "You have deliveries waiting for acceptance",
+        Task.PENDING_PAYMENT:    "You have deliveries waiting for payment",
+        Task.PAYMENT_SENT:       "You have sent payment",
+    }
+    status_dict[Task.DECLINED_DELIVERY] = status_dict[Task.AWAITING_DELIVERY]
+    return status_dict[task.status]
 
 
 @register.filter
