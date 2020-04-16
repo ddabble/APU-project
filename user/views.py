@@ -22,7 +22,8 @@ def signup(request):
             user.profile.competence_categories.add(*form.cleaned_data['competence_categories'])
             user.save()
             raw_password = form.cleaned_data.get('password1')
-            user = authenticate(username=user.username, password=raw_password)
+            # No need to check for success, as the same credentials were used to create the user above
+            authenticate(username=user.username, password=raw_password)
             messages.success(request, 'Your account has been created and is awaiting verification.')
             return redirect('home')
     else:

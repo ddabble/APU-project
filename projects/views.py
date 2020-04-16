@@ -222,7 +222,6 @@ def upload_file_to_task(request, project_id, task_id):
                 task_file.task = task
                 existing_file = task.files.filter(file=directory_path(task_file, task_file.file.file)).first()
                 access = user_permissions['modify'] or user_permissions['owner']
-                access_to_file = False
                 for team in request.user.profile.teams.all():
                     file_modify_access = TaskFileTeam.objects.filter(team=team, file=existing_file, modify=True).exists()
                     access = access or file_modify_access
