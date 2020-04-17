@@ -56,6 +56,23 @@ class SignUpTests(TestCase):
         test_valid_sign_up({'password': self._gen_password_of_length(password_min_length - 1)}, False)
         test_valid_sign_up({'password': self._gen_password_of_length(password_min_length)}, True)
 
+        # TODO: move the phone number tests to own method
+        def test_phone_number(phone_number: str, valid: bool):
+            username = self.next_username()
+            test_valid_sign_up({'username': username, 'phone_number': phone_number}, valid)
+            created_profile = Profile.objects.filter(user__username=username)
+            if valid:
+                self.assertTrue(created_profile.exists())
+                self.assertEqual(created_profile.get().phone_number, phone_number)
+            else:
+                self.assertFalse(created_profile.exists())
+
+        test_phone_number("98765432", True)
+        test_phone_number("9 8 7 6 5 4 3 2", True)
+        test_phone_number("+47 98765432", True)
+        test_phone_number("12345678", False)
+        test_phone_number("asdfqwer", False)
+
     def _gen_password_of_length(self, length: int):
         repeated_base_password = self.base_password * (length // len(self.base_password) + 1)
         password = repeated_base_password[:length]
