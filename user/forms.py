@@ -1,17 +1,30 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from phonenumber_field.formfields import PhoneNumberField
 
 from projects.models import ProjectCategory
+from .models import Profile
 
 
-class SignUpForm(UserCreationForm):
+class SignUpUserForm(UserCreationForm):
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'last_name', 'email', 'email_confirmation', 'password1', 'password2')
+
     first_name = forms.CharField(max_length=30)
-    last_name = forms.CharField(max_length=30)
-    company = forms.CharField(max_length=30, required=False, help_text='Here you can add your company.')
+    last_name = forms.CharField(max_length=150)
 
     email = forms.EmailField(max_length=254, help_text='Input a valid email address.')
     email_confirmation = forms.EmailField(max_length=254, help_text='Enter the same email as before, for verification.')
+
+
+class SignUpProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ('company', 'phone_number', 'country', 'state', 'city', 'postal_code', 'street_address', 'competence_categories')
+
+    company = forms.CharField(max_length=30, required=False, help_text='Here you can add your company.')
 
     phone_number = PhoneNumberField(max_length=20)
 
@@ -25,8 +38,3 @@ class SignUpForm(UserCreationForm):
         queryset=ProjectCategory.objects.all(),
         help_text='Hold down "Control", or "Command" on a Mac, to select more than one.',
     )
-
-    class Meta:
-        model = User
-        fields = ('username', 'first_name', 'last_name', 'competence_categories', 'company', 'email', 'email_confirmation', 'password1', 'password2',
-                  'phone_number', 'country', 'state', 'city', 'postal_code', 'street_address')

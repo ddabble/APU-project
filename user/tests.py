@@ -6,7 +6,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from projects.models import ProjectCategory
-from user.forms import SignUpForm
+from .forms import SignUpProfileForm, SignUpUserForm
 
 
 class SignUpTests(TestCase):
@@ -46,7 +46,7 @@ class SignUpTests(TestCase):
 
             self.assertEqual(User.objects.count(), supposed_num_users_after)
 
-        username_max_length = SignUpForm.base_fields['username'].max_length
+        username_max_length = SignUpUserForm.base_fields['username'].max_length
         test_valid_sign_up({'username': ""}, False)
         test_valid_sign_up({'username': "a"}, True)
         test_valid_sign_up({'username': "a" * username_max_length}, True)
@@ -77,8 +77,14 @@ class SignUpTests(TestCase):
                 'street_address':        "Uptown New York 1",
                 **fields,  # will overwrite any duplicate fields above
             }
-            form = SignUpForm(form_dict)
-            self.assertEqual(form.is_valid(), valid)
+            user_form = SignUpUserForm(form_dict)
+            profile_form = SignUpProfileForm(form_dict)
+            if valid:
+                self.assertTrue(user_form.is_valid())
+                self.assertTrue(profile_form.is_valid())
+            else:
+                # One or both forms should be invalid
+                self.assertFalse(user_form.is_valid() and profile_form.is_valid())
 
         # Longer strings make the passwords more similar to fields based on the same values
         a_token, b_token = "AAAA" * 5, "BBBB" * 5
