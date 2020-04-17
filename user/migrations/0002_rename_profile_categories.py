@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('projects', '0002_auto_20200116_1130'),
+        ('projects', '0002_foreign_keys'),
         ('user', '0001_initial'),
     ]
 

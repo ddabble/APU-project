@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('payment', '0002_auto_20200116_1130'),
+        ('payment', '0002_payment_fields'),
     ]
 
     operations = [
