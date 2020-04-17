@@ -7,6 +7,7 @@ from django.urls import reverse
 
 from projects.models import ProjectCategory
 from .forms import SignUpProfileForm, SignUpUserForm
+from .models import Profile
 
 
 class SignUpTests(TestCase):
@@ -127,10 +128,9 @@ class SignUpTests(TestCase):
         # Passwords are different
         test_field_combination({'password1': a_password, 'email': b_mail,
                                 'password2': b_password, 'email_confirmation': b_mail, 'first_name': b_token}, False)
-        # FIXME: it's never checked that email and email_confirmation are equal!
         # Emails are different
-        # test_field_combination({'password1': b_password, 'email': a_mail,
-        #                         'password2': b_password, 'email_confirmation': b_mail, 'first_name': a_token}, False)
+        test_field_combination({'password1': b_password, 'email': a_mail,
+                                'password2': b_password, 'email_confirmation': b_mail, 'first_name': a_token}, False)
         # Both passwords and emails are different
         test_field_combination({'password1': a_password, 'email': a_mail,
                                 'password2': b_password, 'email_confirmation': b_mail, 'first_name': a_token}, False)
