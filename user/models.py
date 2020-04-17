@@ -28,7 +28,10 @@ class Profile(models.Model):
 
 
 @receiver(post_save, sender=User)
-def update_user_profile(sender, instance, created, **kwargs):
-    if created:
+def update_user_profile(sender, instance, created, raw, **kwargs):
+    # If loading a fixture (raw) or instance is saved but not created:
+    if raw or not created:
+        return
+
+    if not hasattr(instance, 'profile'):
         Profile.objects.create(user=instance)
-    instance.profile.save()
