@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'phonenumber_field',
     'projects.apps.ProjectConfig',
     'home.apps.HomeConfig',
     'user.apps.UserConfig',
@@ -130,6 +131,10 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+
+PHONENUMBER_DEFAULT_FORMAT = 'INTERNATIONAL'
+PHONENUMBER_DEFAULT_REGION = 'NO'
 
 
 # Static files (CSS, JavaScript, Images)

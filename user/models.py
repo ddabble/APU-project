@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from phonenumber_field.modelfields import PhoneNumberField
 
 
 class Profile(models.Model):
@@ -11,7 +12,7 @@ class Profile(models.Model):
         related_name='profile',
     )
     company = models.TextField(max_length=50, blank=True)
-    phone_number = models.TextField(max_length=50, blank=True)
+    phone_number = PhoneNumberField(max_length=20, blank=True)
     country = models.TextField(max_length=50, blank=True)
     state = models.TextField(max_length=50, blank=True)
     city = models.TextField(max_length=50, blank=True)
