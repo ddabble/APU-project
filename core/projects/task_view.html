@@ -24,7 +24,6 @@
     <p>{{ task_accepted_offer.description }}</p>
 
 
-    <div>
     <h3>Task files</h3>
     <div class="task_files">
     {% if user_permissions.read %}
@@ -58,10 +57,7 @@
         <br/>
     {% endif %}
     {% if user == task_accepted_offer.offerer.user %}
-        <div>
-        <div>
         <button class="btn btn-primary" data-toggle="modal" data-target="#seePermissionModal">Change permissions</button>
-        <div>
             <div class="modal fade" id="seePermissionModal" tabindex="-1" role="dialog" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered permis" role="document">
                     <div class="modal-content ">
@@ -129,15 +125,15 @@
                     </div>
                 </div>
             </div>
-        </div>
         <br/>
     {% endif %}
 
 </div>
-</div>
+<br/>
+
     {% if user == task_accepted_offer.offerer.user or user_permissions.owner %}
         <div>
-        <h3>Roles </h3>
+        <h3>Roles</h3>
         {% for team in task.teams.all %}
             <div style="margin-bottom:10px;">
             <h4>{{ team.name }}</h4>
@@ -149,10 +145,7 @@
             </ul>
             <!-- add Task team member-->
             {% if user == task_accepted_offer.offerer.user %}
-                <div>
-                <div>
                 <button class="btn btn-primary" data-toggle="modal" data-target="#seeTeamAddModal{{ team.id }}">Add User</button>
-                <div>
                     <div class="modal fade" id="seeTeamAddModal{{ team.id }}" tabindex="-1" role="dialog" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
@@ -176,17 +169,13 @@
                             </div>
                         </div>
                     </div>
-                </div>
                 <br/>
             {% endif %}
         </div>
         {% endfor %}
         <!-- add Task teams-->
         {% if user == task_accepted_offer.offerer.user %}
-            <div>
-            <div>
             <button class="btn btn-primary" data-toggle="modal" data-target="#seeTeamModal">Add Role</button>
-            <div>
                 <div class="modal fade" id="seeTeamModal" tabindex="-1" role="dialog" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
                         <div class="modal-content">
@@ -209,7 +198,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
         {% endif %}
     </div>
     {% endif %}
@@ -233,12 +221,16 @@
                     </div>
                 {% endfor %}
                 <h2>modify</h2>
-                {% for user_profile in task.odify.all %}
+                {% for user_profile in task.modify.all %}
                     <div>
                         {{ user_profile.user.username }}
                     </div>
                 {% endfor %}
-                <a class="btn btn-default" role="button" href="{% url 'task_permissions' project_id=project.id task_id=task.id %}">Give permission</a>
+
+                <br/>
+                <a class="btn btn-default" role="button" href="{% url 'task_permissions' project_id=project.id task_id=task.id %}">
+                    Give permission
+                </a>
             </div>
         </div>
     {% endif %}
@@ -263,8 +255,6 @@
             </div>
             <h4> Status: {{ delivery.get_status_display }}</h4>
             {% if user_permissions.owner and delivery.status == Delivery.PENDING %}
-                <div>
-                <div>
                 <button class="btn btn-primary" data-toggle="modal" data-target="#seeAcceptDeliveryModal">Respond</button>
                 <div>
                     <div class="modal fade" id="seeAcceptDeliveryModal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -300,8 +290,6 @@
     {% endif %}
     {% if user == task_accepted_offer.offerer.user %}
         {% if task.status == Task.AWAITING_DELIVERY or task.status == Task.DECLINED_DELIVERY %}
-            <div>
-            <div>
             <button class="btn btn-primary" data-toggle="modal" data-target="#seeDeliverModal">Deliver</button>
             <div>
                 <div class="modal fade" id="seeDeliverModal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -334,13 +322,19 @@
     <div>
         {% if user == project.user_profile.user %}
             {% if task.status == Task.PAYMENT_SENT %}
-                <a class="btn btn-primary" role="button" href="{% url 'receipt' project_id=project.id task_id=task.id %}">See receipt</a>
+                <a class="btn btn-primary" role="button" href="{% url 'receipt' project_id=project.id task_id=task.id %}">
+                    See receipt
+                </a>
             {% elif task.status == Task.PENDING_PAYMENT %}
-                <a class="btn btn-primary" role="button" href="{% url 'payment' project_id=project.id task_id=task.id %}">Pay</a>
+                <a class="btn btn-primary" role="button" href="{% url 'payment' project_id=project.id task_id=task.id %}">
+                    Pay
+                </a>
             {% endif %}
         {% elif user == task_accepted_offer.offerer.user %}
             {% if task.status == Task.PAYMENT_SENT %}
-                <a class="btn btn-primary" role="button" href="{% url 'receipt' project_id=project.id task_id=task.id %}">See receipt</a>
+                <a class="btn btn-primary" role="button" href="{% url 'receipt' project_id=project.id task_id=task.id %}">
+                    See receipt
+                </a>
             {% endif %}
         {% endif %}
     </div>
