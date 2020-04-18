@@ -17,11 +17,14 @@ class TemplateTagTests(TestCase):
 
         self.project1 = Project.objects.create(user_profile=self.customer.profile, title="Project 1", description="Something.", category=category1)
 
+        self.num_tasks = 0
+
     def _create_project_tasks(self, num: int, status: str, accept_user: User):
         for i in range(num):
-            task = Task.objects.create(project=self.project1, title=f"Task {i}", description="Also something.", budget=100 + i, status=status)
+            self.num_tasks += 1
+            task = Task.objects.create(project=self.project1, title=f"Task {self.num_tasks}", description="Also something.", budget=100 + i, status=status)
 
-            TaskOffer.objects.create(task=task, title=f"Offer {i}", description="!!", price=100 + i, offerer=accept_user.profile,
+            TaskOffer.objects.create(task=task, title=f"Offer {self.num_tasks}", description="!!", price=100 + i, offerer=accept_user.profile,
                                      status=TaskOffer.ACCEPTED, feedback="ok" * i)
 
     def test_task_statuses_counting_filters(self):

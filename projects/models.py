@@ -35,6 +35,9 @@ class OverwriteStorage(FileSystemStorage):
 
 
 class ProjectCategory(models.Model):
+    class Meta:
+        verbose_name_plural = "project categories"
+
     name = models.CharField(max_length=200, unique=True)
 
     def __str__(self):
@@ -49,6 +52,13 @@ class ProjectCategoryProposal(models.Model):
 
 
 class Project(models.Model):
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['title', 'user_profile'], name="unique_title_per_user"
+            ),
+        ]
+
     user_profile = models.ForeignKey(
         to=Profile,
         on_delete=models.CASCADE,
@@ -94,6 +104,13 @@ class Project(models.Model):
 
 
 class Task(models.Model):
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['title', 'project'], name="unique_title_per_project"
+            ),
+        ]
+
     project = models.ForeignKey(
         to=Project,
         on_delete=models.CASCADE,
@@ -146,6 +163,13 @@ class Task(models.Model):
 
 
 class Team(models.Model):
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['name', 'task'], name="unique_name_per_task"
+            ),
+        ]
+
     name = models.CharField(max_length=200)
     task = models.ForeignKey(
         to=Task,
@@ -198,6 +222,9 @@ class TaskFileTeam(models.Model):
 
 
 class Delivery(models.Model):
+    class Meta:
+        verbose_name_plural = "deliveries"
+
     task = models.ForeignKey(
         to=Task,
         on_delete=models.CASCADE,
