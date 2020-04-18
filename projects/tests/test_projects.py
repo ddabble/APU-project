@@ -1,10 +1,70 @@
 from django.contrib.auth.models import User
-from django.test import Client, TestCase
+from django.db import IntegrityError
+from django.test import Client, TestCase, TransactionTestCase
 from django.urls import reverse
 
 from .. import views
 from ..forms import TaskOfferForm
 from ..models import Project, ProjectCategory, Task, TaskOffer
+
+
+class ProjectModelTests(TransactionTestCase):
+
+    def setUp(self):
+        self.user1 = User.objects.create_user(username="user1")
+        self.user2 = User.objects.create_user(username="user2")
+
+        self.category1 = ProjectCategory.objects.create(name="Testing")
+
+    def _create_project(self, user: User, title: str):
+        return Project.objects.create(user_profile=user.profile, title=title, category=self.category1)
+
+    def test_project_constraints(self):
+        title_a = "Title A"
+        title_b = "Title B"
+
+        self._create_project(self.user1, title_a)
+        with self.assertRaises(IntegrityError):
+            self._create_project(self.user1, title_a)
+        self.assertEqual(Project.objects.filter(title=title_a).count(), 1)
+        self.assertEqual(self.user1.profile.projects.count(), 1)
+
+        self._create_project(self.user2, title_a)
+        with self.assertRaises(IntegrityError):
+            self._create_project(self.user2, title_a)
+        self.assertEqual(Project.objects.filter(title=title_a).count(), 2)
+        self.assertEqual(self.user1.profile.projects.count(), 1)
+        self.assertEqual(self.user2.profile.projects.count(), 1)
+
+        self._create_project(self.user1, title_b)
+        self.assertEqual(Project.objects.filter(title=title_b).count(), 1)
+        self.assertEqual(self.user1.profile.projects.count(), 2)
+
+    def test_task_constraints(self):
+        title_a = "Title A"
+        title_b = "Title B"
+        project1 = self._create_project(self.user1, "Project 1")
+        project2 = self._create_project(self.user1, "Project 2")
+
+        self.assertEqual(project1.num_tasks, 0)
+        self.assertEqual(project2.num_tasks, 0)
+
+        Task.objects.create(project=project1, title=title_a)
+        with self.assertRaises(IntegrityError):
+            Task.objects.create(project=project1, title=title_a)
+        self.assertEqual(Task.objects.filter(title=title_a).count(), 1)
+        self.assertEqual(project1.num_tasks, 1)
+
+        Task.objects.create(project=project2, title=title_a)
+        with self.assertRaises(IntegrityError):
+            Task.objects.create(project=project2, title=title_a)
+        self.assertEqual(Task.objects.filter(title=title_a).count(), 2)
+        self.assertEqual(project1.num_tasks, 1)
+        self.assertEqual(project2.num_tasks, 1)
+
+        Task.objects.create(project=project1, title=title_b)
+        self.assertEqual(Task.objects.filter(title=title_b).count(), 1)
+        self.assertEqual(project1.num_tasks, 2)
 
 
 class ProjectTestCase(TestCase):
