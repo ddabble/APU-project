@@ -66,33 +66,18 @@ def get_user_task_statuses(project: Project, user: User):
 
 
 def _get_status_counts(tasks: Collection[Task]):
-    task_statuses = {}
-
-    awaiting_delivery = 0
-    pending_acceptance = 0
-    pending_payment = 0
-    payment_sent = 0
-    declined_delivery = 0
+    task_status_counts = {status: 0 for status, status_label in Task.STATUS_CHOICES}
 
     for task in tasks:
-        if task.status == Task.AWAITING_DELIVERY:
-            awaiting_delivery += 1
-        elif task.status == Task.PENDING_ACCEPTANCE:
-            pending_acceptance += 1
-        elif task.status == Task.PENDING_PAYMENT:
-            pending_payment += 1
-        elif task.status == Task.PAYMENT_SENT:
-            payment_sent += 1
-        elif task.status == Task.DECLINED_DELIVERY:
-            declined_delivery += 1
+        task_status_counts[task.status] += 1
 
-    task_statuses['awaiting_delivery'] = awaiting_delivery
-    task_statuses['pending_acceptance'] = pending_acceptance
-    task_statuses['pending_payment'] = pending_payment
-    task_statuses['payment_sent'] = payment_sent
-    task_statuses['declined_delivery'] = declined_delivery
-
-    return task_statuses
+    return {
+        'awaiting_delivery':  task_status_counts[Task.AWAITING_DELIVERY],
+        'pending_acceptance': task_status_counts[Task.PENDING_ACCEPTANCE],
+        'pending_payment':    task_status_counts[Task.PENDING_PAYMENT],
+        'payment_sent':       task_status_counts[Task.PAYMENT_SENT],
+        'declined_delivery':  task_status_counts[Task.DECLINED_DELIVERY],
+    }
 
 
 @register.filter
