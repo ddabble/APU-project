@@ -22,6 +22,8 @@ def signup(request):
             profile.pk = user.profile.pk
             profile.user = user
             profile.save()
+            # Save competence_categories
+            profile_form.save_m2m()
 
             raw_password = user_form.cleaned_data.get('password1')
             # No need to check for success, as the same credentials were used to create the user above
