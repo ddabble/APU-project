@@ -150,7 +150,7 @@ class Task(models.Model):
     )
 
     def __str__(self):
-        return f"{self.id} {self.title}"
+        return f"{self.pk} {self.title}"
 
     @property
     def accepted_task_offer(self):
@@ -187,7 +187,7 @@ class Team(models.Model):
 
 
 def directory_path(instance, filename):
-    return f'static/uploads/tasks/{instance.task.id}/{filename}'
+    return f'static/uploads/tasks/{instance.task.pk}/{filename}'
 
 
 class TaskFile(models.Model):

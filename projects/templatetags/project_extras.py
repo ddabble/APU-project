@@ -32,8 +32,8 @@ def modify(per):
 
 
 @register.filter
-def obj_id(obj):
-    return obj.id if obj else None
+def obj_pk(obj):
+    return obj.pk if obj else None
 
 
 @register.simple_tag

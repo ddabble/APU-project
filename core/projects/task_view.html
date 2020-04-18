@@ -103,7 +103,7 @@
                                                 <td>
                                                     <!--https://stackoverflow.com/questions/8000022/django-template-how-to-look-up-a-dictionary-value-with-a-variable-->
                                                     <input type="hidden" name="permission-perobj-{{ file.id }}-{{ team.id }}"
-                                                           value="{{ per|get_item:file.name|get_item:team.name|obj_id }}"/>
+                                                           value="{{ per|get_item:file.name|get_item:team.name|obj_pk }}"/>
                                                     <label>
                                                         <input type="checkbox" name="permission-read-{{ file.id }}-{{ team.id }}" value="True"
                                                                {% if per|get_item:file.name|get_item:team.name|read %}checked{% endif %}/>

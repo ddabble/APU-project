@@ -76,17 +76,17 @@ def new_project(request):
         if form.is_valid():
             project = form.save(commit=False)
             project.user_profile = request.user.profile
-            project.category = get_object_or_404(ProjectCategory, id=request.POST.get('category_id'))
+            project.category = get_object_or_404(ProjectCategory, pk=request.POST.get('category_id'))
             project.save()
 
-            people = Profile.objects.filter(competence_categories__id=project.category.id).exclude(user=request.user)  # do not send email to creator
+            people = Profile.objects.filter(competence_categories=project.category).exclude(user=request.user)  # do not send email to creator
             for person in people:
                 if person.user.email:
                     try:
                         with mail.get_connection() as connection:
                             mail.EmailMessage(
                                 f"New Project: {project.title}",
-                                f"A new project you might be interested in was created and can be viwed at {current_site.domain}/projects/{project.id}",
+                                f"A new project you might be interested in was created and can be viwed at {current_site.domain}/projects/{project.pk}",
                                 "Agreelancer",
                                 [person.user.email],
                                 connection=connection,
@@ -104,7 +104,7 @@ def new_project(request):
                     budget=task_budget[i],
                     project=project,
                 )
-            return redirect('project_view', project_id=project.id)
+            return redirect('project_view', project_id=project.pk)
     else:
         form = ProjectForm()
 
@@ -156,7 +156,7 @@ def project_view(request, project_id):
     if request.user == project.user_profile.user:
 
         if request.method == 'POST' and 'offer_response' in request.POST:
-            instance = get_object_or_404(TaskOffer, id=request.POST.get('taskofferid'))
+            instance = get_object_or_404(TaskOffer, pk=request.POST.get('taskofferid'))
             offer_response_form = TaskOfferResponseForm(request.POST, instance=instance)
             if offer_response_form.is_valid():
                 offer_response = offer_response_form.save(commit=False)
@@ -233,7 +233,7 @@ def upload_file_to_task(request, project_id, task_id):
                     task_file.save()
 
                     if request.user.profile != project.user_profile and request.user.profile != task.accepted_task_offer.offerer:
-                        teams = request.user.profile.teams.filter(task__id=task.id)
+                        teams = request.user.profile.teams.filter(task=task)
                         for team in teams:
                             tft = TaskFileTeam()
                             tft.team = team
@@ -279,14 +279,14 @@ def get_user_task_permissions(user, task):
         'view_task': False,
         'upload':    False,
     }
-    user_permissions['read'] = user_permissions['read'] or user.profile.task_participants_read.filter(id=task.id).exists()
+    user_permissions['read'] = user_permissions['read'] or user.profile.task_participants_read.filter(pk=task.pk).exists()
 
     # Team members can view their teams' tasks
-    user_permissions['upload'] = user_permissions['upload'] or user.profile.teams.filter(task__id=task.id, write=True).exists()
-    user_permissions['view_task'] = user_permissions['view_task'] or user.profile.teams.filter(task__id=task.id).exists()
+    user_permissions['upload'] = user_permissions['upload'] or user.profile.teams.filter(task=task, write=True).exists()
+    user_permissions['view_task'] = user_permissions['view_task'] or user.profile.teams.filter(task=task).exists()
 
-    user_permissions['write'] = user_permissions['write'] or user.profile.task_participants_write.filter(id=task.id).exists()
-    user_permissions['modify'] = user_permissions['modify'] or user.profile.task_participants_modify.filter(id=task.id).exists()
+    user_permissions['write'] = user_permissions['write'] or user.profile.task_participants_write.filter(pk=task.pk).exists()
+    user_permissions['modify'] = user_permissions['modify'] or user.profile.task_participants_modify.filter(pk=task.pk).exists()
 
     return user_permissions
 
@@ -314,7 +314,7 @@ def task_view(request, project_id, task_id):
                 task.save()
 
     if request.method == 'POST' and 'delivery-response' in request.POST:
-        instance = get_object_or_404(Delivery, id=request.POST.get('delivery-id'))
+        instance = get_object_or_404(Delivery, pk=request.POST.get('delivery-id'))
         deliver_response_form = TaskDeliveryResponseForm(request.POST, instance=instance)
         if deliver_response_form.is_valid():
             delivery = deliver_response_form.save()
@@ -339,7 +339,7 @@ def task_view(request, project_id, task_id):
 
     if request.method == 'POST' and 'team-add' in request.POST:
         if accepted_task_offer and accepted_task_offer.offerer == user.profile:
-            instance = get_object_or_404(Team, id=request.POST.get('team-id'))
+            instance = get_object_or_404(Team, pk=request.POST.get('team-id'))
             team_add_form = TeamAddForm(request.POST, instance=instance)
             if team_add_form.is_valid():
                 team = team_add_form.save(False)
@@ -350,21 +350,21 @@ def task_view(request, project_id, task_id):
         if accepted_task_offer and accepted_task_offer.offerer == user.profile:
             for t in task.teams.all():
                 for f in task.files.all():
-                    tft_string = f'permission-perobj-{f.id}-{t.id}'
+                    tft_string = f'permission-perobj-{f.pk}-{t.pk}'
                     tft_id = request.POST.get(tft_string)
                     try:
-                        instance = TaskFileTeam.objects.get(id=tft_id)
+                        instance = TaskFileTeam.objects.get(pk=tft_id)
                     except TaskFileTeam.DoesNotExist:
                         instance = TaskFileTeam(
                             file=f,
                             team=t,
                         )
 
-                    instance.read = request.POST.get(f'permission-read-{f.id}-{t.id}') or False
-                    instance.write = request.POST.get(f'permission-write-{f.id}-{t.id}') or False
-                    instance.modify = request.POST.get(f'permission-modify-{f.id}-{t.id}') or False
+                    instance.read = request.POST.get(f'permission-read-{f.pk}-{t.pk}') or False
+                    instance.write = request.POST.get(f'permission-write-{f.pk}-{t.pk}') or False
+                    instance.modify = request.POST.get(f'permission-modify-{f.pk}-{t.pk}') or False
                     instance.save()
-                t.write = request.POST.get(f'permission-upload-{t.id}') or False
+                t.write = request.POST.get(f'permission-upload-{t.pk}') or False
                 t.save()
 
     deliver_form = DeliveryForm()
@@ -376,7 +376,7 @@ def task_view(request, project_id, task_id):
             or user_permissions['owner'] or user_permissions['view_task']:
         deliveries = task.deliveries.all()
         team_files = []
-        teams = user.profile.teams.filter(task__id=task.id)
+        teams = user.profile.teams.filter(task=task)
         per = {}
         for f in task.files.all():
             per[f.name()] = {}
@@ -408,7 +408,7 @@ def task_permissions(request, project_id, task_id):
     project = get_object_or_404(Project, pk=project_id)
     if project.user_profile == request.user.profile or user == task.accepted_task_offer.offerer.user:
         task = Task.objects.get(pk=task_id)
-        if project_id == task.project.id:
+        if project_id == task.project.pk:
             if request.method == 'POST':
                 task_permission_form = TaskPermissionForm(request.POST)
                 if task_permission_form.is_valid():
