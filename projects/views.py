@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
 from django.core import mail
 from django.db.models import Count, Sum
-from django.http import HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
@@ -431,29 +431,25 @@ def task_permissions(request, project_id, task_id):
     user = request.user
     task = get_object_or_404(Task, pk=task_id)
     project = get_object_or_404(Project, pk=project_id)
-    if project.user_profile == request.user.profile or user == task.accepted_task_offer.offerer.user:
-        task = Task.objects.get(pk=task_id)
-        if project_id == task.project.pk:
-            if request.method == 'POST':
-                task_permission_form = TaskPermissionForm(request.POST)
-                if task_permission_form.is_valid():
-                    user = task_permission_form.cleaned_data['user']
-                    permission_type = task_permission_form.cleaned_data['permission']
-                    if permission_type == TaskPermissionForm.READ:
-                        task.read.add(user.profile)
-                    elif permission_type == TaskPermissionForm.WRITE:
-                        task.write.add(user.profile)
-                    elif permission_type == TaskPermissionForm.MODIFY:
-                        task.modify.add(user.profile)
-                    return redirect('task_view', project_id=project_id, task_id=task_id)
+    if project_id != task.project.pk:
+        raise Http404(f"No task with pk={task_id} and project__pk={project_id} was found.")
 
-            task_permission_form = TaskPermissionForm()
-            return render(request, 'projects/task_permissions.html', {
-                'project': project,
-                'task':    task,
-                'form':    task_permission_form,
-            })
-    return redirect('task_view', project_id=project_id, task_id=task_id)
+    has_edit_permission = project.user_profile == user.profile or user == task.accepted_task_offer.offerer.user
+    if not has_edit_permission:
+        return redirect('task_view', project_id=project_id, task_id=task_id)
+
+    if request.method == 'POST':
+        task_permission_form = TaskPermissionForm(request.POST)
+        if task_permission_form.is_valid():
+            task_permission_form.add_permission_to_task(task)
+            return redirect('task_view', project_id=project_id, task_id=task_id)
+
+    task_permission_form = TaskPermissionForm()
+    return render(request, 'projects/task_permissions.html', {
+        'project': project,
+        'task':    task,
+        'form':    task_permission_form,
+    })
 
 
 def delete_file(request, file_id):

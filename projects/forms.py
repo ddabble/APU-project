@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 
 from user.models import Profile
-from .models import Delivery, Project, ProjectCategory, ProjectCategoryProposal, TaskFile, TaskOffer, Team
+from .models import Delivery, Project, ProjectCategory, ProjectCategoryProposal, Task, TaskFile, TaskOffer, Team
 
 
 class ProjectSortingForm(forms.Form):
@@ -103,6 +103,16 @@ class TaskPermissionForm(forms.Form):
     )
     user = forms.ModelChoiceField(queryset=User.objects.all())
     permission = forms.ChoiceField(choices=PERMISSION_CHOICES)
+
+    def add_permission_to_task(self, task: Task):
+        user = self.cleaned_data['user']
+        permission_type = self.cleaned_data['permission']
+        if permission_type == self.READ:
+            task.read.add(user.profile)
+        elif permission_type == self.WRITE:
+            task.write.add(user.profile)
+        elif permission_type == self.MODIFY:
+            task.modify.add(user.profile)
 
 
 class DeliveryForm(forms.ModelForm):
