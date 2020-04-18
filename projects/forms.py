@@ -93,10 +93,13 @@ class TaskDeliveryResponseForm(forms.ModelForm):
 
 
 class TaskPermissionForm(forms.Form):
+    READ = 'Read'
+    WRITE = 'Write'
+    MODIFY = 'Modify'
     PERMISSION_CHOICES = (
-        ('Read', 'Read'),
-        ('Write', 'Write'),
-        ('Modify', 'Modify'),
+        (READ, 'Read'),
+        (WRITE, 'Write'),
+        (MODIFY, 'Modify'),
     )
     user = forms.ModelChoiceField(queryset=User.objects.all())
     permission = forms.ChoiceField(choices=PERMISSION_CHOICES)

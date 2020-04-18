@@ -439,11 +439,11 @@ def task_permissions(request, project_id, task_id):
                 if task_permission_form.is_valid():
                     user = task_permission_form.cleaned_data['user']
                     permission_type = task_permission_form.cleaned_data['permission']
-                    if permission_type == 'Read':
+                    if permission_type == TaskPermissionForm.READ:
                         task.read.add(user.profile)
-                    elif permission_type == 'Write':
+                    elif permission_type == TaskPermissionForm.WRITE:
                         task.write.add(user.profile)
-                    elif permission_type == 'Modify':
+                    elif permission_type == TaskPermissionForm.MODIFY:
                         task.modify.add(user.profile)
                     return redirect('task_view', project_id=project_id, task_id=task_id)
 
