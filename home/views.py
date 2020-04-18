@@ -7,15 +7,15 @@ def home(request):
     if request.user.is_authenticated:
         user = request.user
         user_projects = Project.objects.filter(user_profile=user.profile)
-        customer_projects = list(Project.objects.filter(participants__id=user.id).order_by().distinct())
-        for team in user.profile.teams.all():
+        customer_projects = list(Project.objects.filter(participants__id=user.id))
+        for team in user.profile.teams.select_related('task__project'):
             customer_projects.append(team.task.project)
         cd = {}
         for customer_project in customer_projects:
             cd[customer_project.id] = customer_project
 
         customer_projects = cd.values()
-        given_offers_projects = Project.objects.filter(pk__in=get_given_offer_projects(user)).distinct()
+        given_offers_projects = get_given_offer_projects(user)
         return render(request, 'index.html', {
             'user_projects':          user_projects,
             'customer_projects':      customer_projects,
@@ -28,9 +28,9 @@ def home(request):
 
 
 def get_given_offer_projects(user):
-    project_ids = set()
+    projects = set()
 
-    for taskoffer in user.profile.task_offers.all():
-        project_ids.add(taskoffer.task.project.id)
+    for taskoffer in user.profile.task_offers.select_related('task__project'):
+        projects.add(taskoffer.task.project)
 
-    return project_ids
+    return projects
