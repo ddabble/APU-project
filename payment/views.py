@@ -18,8 +18,7 @@ def payment(request, project_id, task_id):
 
         return redirect('receipt', project_id=project_id, task_id=task_id)
 
-    form = PaymentForm()
-    return render(request, 'payment/payment.html', {'form': form})
+    return render(request, 'payment/payment.html', {'form': PaymentForm()})
 
 
 def receipt(request, project_id, task_id):

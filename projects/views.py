@@ -424,7 +424,6 @@ class TaskView(django_views.TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         team_files = []
-        teams = self.user.profile.teams.filter(task=self.task)
         per = {}
         for file in self.task.files.prefetch_related('teams__team'):
             file_name = file.name()

@@ -1,14 +1,6 @@
 from django import template
-from django.contrib.auth.models import User
 
 register = template.Library()
-
-
-#### Unnecessary
-@register.filter
-def get_owner(value):
-    user = User.objects.get(profile=value)
-    return user.username
 
 
 @register.filter
@@ -43,32 +35,15 @@ def define(val=None):
 
 @register.filter
 def check_taskoffers(task, user):
-    taskoffers = task.offers.filter(offerer=user.profile)
-    useroffers = []
-
-    for item in taskoffers:
-        useroffers.append(item)
-
-    return useroffers
+    return list(task.offers.filter(offerer=user.profile))
 
 
 @register.filter
 def get_all_taskoffers(task):
-    taskoffers = task.offers.all()
-    return taskoffers
+    return task.offers.all()
 
 
 @register.filter
 def get_project_participants_string(project):
-    participants_string = ', '.join(get_project_participants(project))
-
-    return participants_string
-
-
-def get_project_participants(project):
-    query = project.participants.all()
-    participants = set()
-    for participant in query:
-        participants.add(participant.user.username)
-
-    return participants
+    participants = project.participants.select_related('user')
+    return ', '.join(set(p.user.username for p in participants))
