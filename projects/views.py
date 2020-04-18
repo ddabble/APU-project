@@ -150,7 +150,7 @@ class CategoryProposalsView(django_views.ListView):
 
 
 def project_view(request, project_id):
-    project = Project.objects.get(pk=project_id)
+    project = get_object_or_404(Project, pk=project_id)
     tasks = project.tasks.all()
 
     if request.user == project.user_profile.user:
@@ -192,7 +192,7 @@ def project_view(request, project_id):
             task_offer_form = TaskOfferForm(request.POST)
             if task_offer_form.is_valid():
                 task_offer = task_offer_form.save(commit=False)
-                task_offer.task = Task.objects.get(pk=request.POST.get('taskvalue'))
+                task_offer.task = get_object_or_404(Task, pk=request.POST.get('taskvalue'))
                 task_offer.offerer = request.user.profile
                 task_offer.save()
         task_offer_form = TaskOfferForm()
@@ -211,8 +211,8 @@ def is_project_owner(user, project):
 
 
 def upload_file_to_task(request, project_id, task_id):
-    project = Project.objects.get(pk=project_id)
-    task = Task.objects.get(pk=task_id)
+    project = get_object_or_404(Project, pk=project_id)
+    task = get_object_or_404(Task, pk=task_id)
     user_permissions = get_user_task_permissions(request.user, task)
 
     if user_permissions['modify'] or user_permissions['write'] or user_permissions['upload'] or is_project_owner(request.user, project):
@@ -293,8 +293,8 @@ def get_user_task_permissions(user, task):
 
 def task_view(request, project_id, task_id):
     user = request.user
-    project = Project.objects.get(pk=project_id)
-    task = Task.objects.get(pk=task_id)
+    project = get_object_or_404(Project, pk=project_id)
+    task = get_object_or_404(Task, pk=task_id)
     accepted_task_offer = task.accepted_task_offer
 
     user_permissions = get_user_task_permissions(request.user, task)
@@ -404,8 +404,8 @@ def task_view(request, project_id, task_id):
 
 def task_permissions(request, project_id, task_id):
     user = request.user
-    task = Task.objects.get(pk=task_id)
-    project = Project.objects.get(pk=project_id)
+    task = get_object_or_404(Task, pk=task_id)
+    project = get_object_or_404(Project, pk=project_id)
     if project.user_profile == request.user.profile or user == task.accepted_task_offer.offerer.user:
         task = Task.objects.get(pk=task_id)
         if project_id == task.project.id:
@@ -432,6 +432,6 @@ def task_permissions(request, project_id, task_id):
 
 
 def delete_file(request, file_id):
-    f = TaskFile.objects.get(pk=file_id)
+    f = get_object_or_404(TaskFile, pk=file_id)
     f.delete()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
