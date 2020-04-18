@@ -2,14 +2,15 @@ from http import HTTPStatus
 
 import django.views.generic as django_views
 from django.contrib import messages
+from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
 from django.core import mail
 from django.db.models import Count, Sum
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.utils import timezone
 
-from user.models import Profile
 from .forms import DeliveryForm, ProjectCategoryProposalForm, ProjectFilteringForm, ProjectForm, ProjectSortingForm, ProjectStatusForm, \
     TaskDeliveryResponseForm, TaskFileForm, TaskOfferForm, TaskOfferResponseForm, TaskPermissionForm, TeamAddForm, TeamForm
 from .models import Delivery, Project, ProjectCategory, ProjectCategoryProposal, Task, TaskFile, TaskFileTeam, TaskOffer, Team, directory_path
@@ -88,50 +89,55 @@ class ProjectsView(django_views.TemplateView):
         return projects
 
 
-def new_project(request):
-    current_site = get_current_site(request)
-    if request.method == 'POST':
-        form = ProjectForm(request.POST)
-        if form.is_valid():
-            project = form.save(commit=False)
-            project.user_profile = request.user.profile
-            project.category = get_object_or_404(ProjectCategory, pk=request.POST.get('category_id'))
-            project.save()
+class ProjectCreateView(django_views.CreateView):
+    model = Project
+    form_class = ProjectForm
+    template_name = 'projects/new_project.html'
 
-            people = Profile.objects.filter(competence_categories=project.category).exclude(user=request.user)  # do not send email to creator
-            for person in people:
-                if person.user.email:
-                    try:
-                        with mail.get_connection() as connection:
-                            mail.EmailMessage(
-                                f"New Project: {project.title}",
-                                f"A new project you might be interested in was created and can be viwed at {current_site.domain}/projects/{project.pk}",
-                                "Agreelancer",
-                                [person.user.email],
-                                connection=connection,
-                            ).send()
-                    except Exception as e:
-                        messages.success(request, f"Sending of email to {person.user.email} failed: {e}")
+    extra_context = {'category_proposal_form': ProjectCategoryProposalForm()}
 
-            task_title = request.POST.getlist('task_title')
-            task_description = request.POST.getlist('task_description')
-            task_budget = request.POST.getlist('task_budget')
-            for i in range(len(task_title)):
-                Task.objects.create(
-                    title=task_title[i],
-                    description=task_description[i],
-                    budget=task_budget[i],
-                    project=project,
-                )
-            return redirect('project_view', project_id=project.pk)
-    else:
-        form = ProjectForm()
+    def get_success_url(self):
+        return reverse('project_view', kwargs={'project_id': self.object.pk})
 
-    category_proposal_form = ProjectCategoryProposalForm()
-    return render(request, 'projects/new_project.html', {
-        'form':                   form,
-        'category_proposal_form': category_proposal_form,
-    })
+    def form_valid(self, form):
+        project = form.save(commit=False)
+        project.user_profile = self.request.user.profile
+        project.category = get_object_or_404(ProjectCategory, pk=self.request.POST.get('category_id'))
+        project.save()
+
+        compenent_users = User.objects.filter(profile__competence_categories=project.category)
+        for user in compenent_users.exclude(pk=self.request.user.pk):  # do not send email to creator
+            self.send_email(user, project)
+
+        task_title = self.request.POST.getlist('task_title')
+        task_description = self.request.POST.getlist('task_description')
+        task_budget = self.request.POST.getlist('task_budget')
+        for i in range(len(task_title)):
+            Task.objects.create(
+                title=task_title[i],
+                description=task_description[i],
+                budget=task_budget[i],
+                project=project,
+            )
+
+        return super().form_valid(form)
+
+    def send_email(self, user: User, project: Project):
+        if not user.email:
+            return
+
+        try:
+            with mail.get_connection() as connection:
+                mail.EmailMessage(
+                    subject=f"New Project: {project.title}",
+                    body="A new project you might be interested in was created and can be viwed at "
+                         f"{get_current_site(self.request).domain}/projects/{project.pk}",
+                    from_email="Agreelancer",
+                    to=[user.email],
+                    connection=connection,
+                ).send()
+        except Exception as e:
+            messages.error(self.request, f"Sending of email to {user.email} failed: {e}")
 
 
 class ProposeCategoryView(django_views.edit.BaseCreateView):

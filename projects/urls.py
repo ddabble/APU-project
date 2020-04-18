@@ -6,7 +6,7 @@ from . import views
 
 urlpatterns = [
     path('', views.ProjectsView.as_view(), name='projects'),
-    path('new/', login_required(views.new_project), name='new_project'),
+    path('new/', login_required(views.ProjectCreateView.as_view()), name='new_project'),
     path('categories/new/', login_required(views.ProposeCategoryView.as_view()), name='propose_category'),
     path('categories/proposals/', staff_member_required(views.CategoryProposalsView.as_view()), name='category_proposals'),
     path('<int:project_id>/', views.project_view, name='project_view'),
