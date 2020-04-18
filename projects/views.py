@@ -15,58 +15,77 @@ from .forms import DeliveryForm, ProjectCategoryProposalForm, ProjectFilteringFo
 from .models import Delivery, Project, ProjectCategory, ProjectCategoryProposal, Task, TaskFile, TaskFileTeam, TaskOffer, Team, directory_path
 
 
-def projects(request):
-    selected_projects = Project.objects.prefetch_related('category', 'user_profile__user', 'tasks__offers')
+class ProjectsView(django_views.TemplateView):
+    template_name = 'projects/projects.html'
+    extra_context = {
+        'project_categories': ProjectCategory.objects.all(),
+        'Project':            Project,
+    }
+    base_projects = Project.objects.prefetch_related('category', 'user_profile__user', 'tasks__offers')
 
-    if request.method == 'POST':
+    annotated_fields = {
+        ProjectSortingForm.NUM_TASKS:    Count('tasks'),
+        ProjectSortingForm.TOTAL_BUDGET: Sum('tasks__budget'),
+        ProjectSortingForm.NUM_OFFERS:   Count('tasks__offers'),
+    }
+
+    def get(self, request, *args, **kwargs):
+        context = {
+            'projects':       self.base_projects,
+            'sorting_form':   ProjectSortingForm(),
+            'filtering_form': ProjectFilteringForm(),
+        }
+        kwargs.update(context)
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        selected_projects = self.base_projects
+
         sorting_form = ProjectSortingForm(request.POST)
         filtering_form = ProjectFilteringForm(request.POST)
         if sorting_form.is_valid() and filtering_form.is_valid():
-            sorting_field = sorting_form.cleaned_data['sorting_field']
-            ascending = sorting_form.cleaned_data['ascending']
-            max_total_budget = filtering_form.cleaned_data['max_total_budget']
-            max_num_offers = filtering_form.cleaned_data['max_num_offers']
+            selected_projects = self.filter_projects(selected_projects, filtering_form)
+            selected_projects = self.sort_projects(selected_projects, sorting_form)
 
-            annotated_fields = {
-                ProjectSortingForm.NUM_TASKS:    Count('tasks'),
-                ProjectSortingForm.TOTAL_BUDGET: Sum('tasks__budget'),
-                ProjectSortingForm.NUM_OFFERS:   Count('tasks__offers'),
-            }
+        context = {
+            'projects':       selected_projects,
+            'sorting_form':   sorting_form,
+            'filtering_form': filtering_form,
+        }
+        kwargs.update(context)
+        return super().get(request, *args, **kwargs)  # just returns a rendered response with context
 
-            # Sorting
-            if sorting_field:
-                if sorting_field in annotated_fields:
-                    annotation_kwarg = {sorting_field: annotated_fields[sorting_field]}
-                    selected_projects = selected_projects.annotate(**annotation_kwarg)
-                ordering = '' if ascending else '-'
-                selected_projects = selected_projects.order_by(f'{ordering}{sorting_field}')
+    def sort_projects(self, projects, sorting_form: ProjectSortingForm):
+        sorting_field = sorting_form.cleaned_data['sorting_field']
+        ascending = sorting_form.cleaned_data['ascending']
+        if sorting_field:
+            if sorting_field in self.annotated_fields:
+                annotation_kwarg = {sorting_field: self.annotated_fields[sorting_field]}
+                projects = projects.annotate(**annotation_kwarg)
+            ordering = '' if ascending else '-'
+            projects = projects.order_by(f'{ordering}{sorting_field}')
 
-            # Filtering
-            if any(value is not None for value in filtering_form.cleaned_data.values()):
-                filtering_field_values = []
-                if max_total_budget is not None:
-                    filtering_field_values.append((ProjectSortingForm.TOTAL_BUDGET, max_total_budget))
+        return projects
 
-                if max_num_offers is not None:
-                    filtering_field_values.append((ProjectSortingForm.NUM_OFFERS, max_num_offers))
+    def filter_projects(self, projects, filtering_form: ProjectFilteringForm):
+        max_total_budget = filtering_form.cleaned_data['max_total_budget']
+        max_num_offers = filtering_form.cleaned_data['max_num_offers']
+        if any(value is not None for value in filtering_form.cleaned_data.values()):
+            filtering_field_values = []
+            if max_total_budget is not None:
+                filtering_field_values.append((ProjectSortingForm.TOTAL_BUDGET, max_total_budget))
 
-                for field_to_annotate, value in filtering_field_values:
-                    annotation_kwarg = {field_to_annotate: annotated_fields[field_to_annotate]}
-                    filter_expr = f'{field_to_annotate}__lte'
-                    filter_kwarg = {filter_expr: value}
+            if max_num_offers is not None:
+                filtering_field_values.append((ProjectSortingForm.NUM_OFFERS, max_num_offers))
 
-                    selected_projects = selected_projects.annotate(**annotation_kwarg).filter(**filter_kwarg)
-    else:
-        sorting_form = ProjectSortingForm()
-        filtering_form = ProjectFilteringForm()
+            for field_to_annotate, value in filtering_field_values:
+                annotation_kwarg = {field_to_annotate: self.annotated_fields[field_to_annotate]}
+                filter_expr = f'{field_to_annotate}__lte'
+                filter_kwarg = {filter_expr: value}
 
-    return render(request, 'projects/projects.html', {
-        'projects':           selected_projects,
-        'project_categories': ProjectCategory.objects.all(),
-        'sorting_form':       sorting_form,
-        'filtering_form':     filtering_form,
-        'Project':            Project,
-    })
+                projects = projects.annotate(**annotation_kwarg).filter(**filter_kwarg)
+
+        return projects
 
 
 def new_project(request):
