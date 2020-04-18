@@ -26,38 +26,39 @@
 
     <h3>Task files</h3>
     <div class="task_files">
-    {% if user_permissions.read %}
-        {% for file in task.files.all %}
-            <div>
-                <a target="_blank" href="/{{ file.file }}">
-                    {{ file.name }}
-                </a>
-            </div>
-        {% endfor %}
-    {% else %}
-        {% for file in team_files %}
-            <div>
-                <a target="_blank" href="/{{ file.file.file }}">
-                    {{ file.file.name }}
-                </a>
-                {% if file.modify %}
-                    <a href="{% url 'delete_file' file_id=file.file.id %}">
-                        [Delete]
+
+        {% if user_permissions.read %}
+            {% for file in task.files.all %}
+                <div>
+                    <a target="_blank" href="/{{ file.file }}">
+                        {{ file.name }}
                     </a>
-                {% endif %}
-            </div>
-        {% endfor %}
-    {% endif %}
+                </div>
+            {% endfor %}
+        {% else %}
+            {% for file in team_files %}
+                <div>
+                    <a target="_blank" href="/{{ file.file.file }}">
+                        {{ file.file.name }}
+                    </a>
+                    {% if file.modify %}
+                        <a href="{% url 'delete_file' file_id=file.file.id %}">
+                            [Delete]
+                        </a>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% endif %}
 
 
-    {% if user_permissions.owner or user_permissions.modify or user_permissions.write or user_permissions.upload %}
-        <a class="btn btn-default" role="button" href="{% url 'upload_file_to_task' project_id=project.id task_id=task.id %}">
-            Upload file
-        </a>
-        <br/>
-    {% endif %}
-    {% if user == task_accepted_offer.offerer.user %}
-        <button class="btn btn-primary" data-toggle="modal" data-target="#seePermissionModal">Change permissions</button>
+        {% if user_permissions.owner or user_permissions.modify or user_permissions.write or user_permissions.upload %}
+            <a class="btn btn-default" role="button" href="{% url 'upload_file_to_task' project_id=project.id task_id=task.id %}">
+                Upload file
+            </a>
+            <br/>
+        {% endif %}
+        {% if user == task_accepted_offer.offerer.user %}
+            <button class="btn btn-primary" data-toggle="modal" data-target="#seePermissionModal">Change permissions</button>
             <div class="modal fade" id="seePermissionModal" tabindex="-1" role="dialog" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered permis" role="document">
                     <div class="modal-content ">
@@ -125,57 +126,57 @@
                     </div>
                 </div>
             </div>
-        <br/>
-    {% endif %}
+            <br/>
+        {% endif %}
 
-</div>
-<br/>
+    </div>
+    <br/>
 
     {% if user == task_accepted_offer.offerer.user or user_permissions.owner %}
         <div>
-        <h3>Roles</h3>
-        {% for team in task.teams.all %}
-            <div style="margin-bottom:10px;">
-            <h4>{{ team.name }}</h4>
-            Members:
-            <ul>
-                {% for member in team.members.all %}
-                    <li>{{ member.user.username }}</li>
-                {% endfor %}
-            </ul>
-            <!-- add Task team member-->
-            {% if user == task_accepted_offer.offerer.user %}
-                <button class="btn btn-primary" data-toggle="modal" data-target="#seeTeamAddModal{{ team.id }}">Add User</button>
-                    <div class="modal fade" id="seeTeamAddModal{{ team.id }}" tabindex="-1" role="dialog" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="seeTeamAddModalTitle{{ team.id }}">Add user(s) to role {{ team.name }}</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
+            <h3>Roles</h3>
+            {% for team in task.teams.all %}
+                <div style="margin-bottom:10px;">
+                    <h4>{{ team.name }}</h4>
+                    Members:
+                    <ul>
+                        {% for member in team.members.all %}
+                            <li>{{ member.user.username }}</li>
+                        {% endfor %}
+                    </ul>
+                    <!-- add Task team member-->
+                    {% if user == task_accepted_offer.offerer.user %}
+                        <button class="btn btn-primary" data-toggle="modal" data-target="#seeTeamAddModal{{ team.id }}">Add User</button>
+                        <div class="modal fade" id="seeTeamAddModal{{ team.id }}" tabindex="-1" role="dialog" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="seeTeamAddModalTitle{{ team.id }}">Add user(s) to role {{ team.name }}</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <form method="POST">
+                                        <div class="modal-body">
+                                            <input type="hidden" value="{{ team.id }}" name="team-id"/>
+                                            {% csrf_token %}
+                                            {% bootstrap_form team_add_form %}
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                            <button type="submit" name="team-add" class="btn btn-primary">Add Members</button>
+                                        </div>
+                                    </form>
                                 </div>
-                                <form method="POST">
-                                    <div class="modal-body">
-                                        <input type="hidden" value="{{ team.id }}" name="team-id"/>
-                                        {% csrf_token %}
-                                        {% bootstrap_form team_add_form %}
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="submit" name="team-add" class="btn btn-primary">Add Members</button>
-                                    </div>
-                                </form>
                             </div>
                         </div>
-                    </div>
-                <br/>
-            {% endif %}
-        </div>
-        {% endfor %}
-        <!-- add Task teams-->
-        {% if user == task_accepted_offer.offerer.user %}
-            <button class="btn btn-primary" data-toggle="modal" data-target="#seeTeamModal">Add Role</button>
+                        <br/>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <!-- add Task teams-->
+            {% if user == task_accepted_offer.offerer.user %}
+                <button class="btn btn-primary" data-toggle="modal" data-target="#seeTeamModal">Add Role</button>
                 <div class="modal fade" id="seeTeamModal" tabindex="-1" role="dialog" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
                         <div class="modal-content">
@@ -198,8 +199,8 @@
                         </div>
                     </div>
                 </div>
-        {% endif %}
-    </div>
+            {% endif %}
+        </div>
     {% endif %}
 
     <!-- end Task teams-->
@@ -237,56 +238,56 @@
 
     {% if user == task_accepted_offer.offerer.user or user_permissions.owner %}
         <div>
-        <h3>Deliveries:</h3>
+            <h3>Deliveries:</h3>
 
-        {% for delivery in deliveries %}
-            <div>
-            <div>
-                {{ delivery.comment }}
-            </div>
-            <div>
-                <a target="_blenk" href="/{{ delivery.file }}">
-                    {{ delivery.file }}
-                </a>
-            </div>
-            <div>
-                <h3>Feedback: </h3>
-                {{ delivery.feedback }}
-            </div>
-            <h4> Status: {{ delivery.get_status_display }}</h4>
-            {% if user_permissions.owner and delivery.status == Delivery.PENDING %}
-                <button class="btn btn-primary" data-toggle="modal" data-target="#seeAcceptDeliveryModal">Respond</button>
+            {% for delivery in deliveries %}
                 <div>
-                    <div class="modal fade" id="seeAcceptDeliveryModal" tabindex="-1" role="dialog" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="seeAcceptDeliveryModal">Accept delivery</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
+                    <div>
+                        {{ delivery.comment }}
+                    </div>
+                    <div>
+                        <a target="_blenk" href="/{{ delivery.file }}">
+                            {{ delivery.file }}
+                        </a>
+                    </div>
+                    <div>
+                        <h3>Feedback: </h3>
+                        {{ delivery.feedback }}
+                    </div>
+                    <h4> Status: {{ delivery.get_status_display }}</h4>
+                    {% if user_permissions.owner and delivery.status == Delivery.PENDING %}
+                        <button class="btn btn-primary" data-toggle="modal" data-target="#seeAcceptDeliveryModal">Respond</button>
+                        <div>
+                            <div class="modal fade" id="seeAcceptDeliveryModal" tabindex="-1" role="dialog" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="seeAcceptDeliveryModal">Accept delivery</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <form method="POST">
+                                            <div class="modal-body">
+                                                {{ delivery.comment }}
+                                                {% csrf_token %}
+                                                {% bootstrap_form deliver_response_form %}
+                                                <input type="hidden" name="delivery-id" value="{{ delivery.id }}"/>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                <button type="submit" name="delivery-response" class="btn btn-primary">Send Response</button>
+                                            </div>
+                                        </form>
+                                    </div>
                                 </div>
-                                <form method="POST">
-                                    <div class="modal-body">
-                                        {{ delivery.comment }}
-                                        {% csrf_token %}
-                                        {% bootstrap_form deliver_response_form %}
-                                        <input type="hidden" name="delivery-id" value="{{ delivery.id }}"/>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="submit" name="delivery-response" class="btn btn-primary">Send Response</button>
-                                    </div>
-                                </form>
                             </div>
                         </div>
-                    </div>
-                </div>
-            {% endif %}
+                    {% endif %}
 
+                </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
     {% endif %}
     {% if user == task_accepted_offer.offerer.user %}
         {% if task.status == Task.AWAITING_DELIVERY or task.status == Task.DECLINED_DELIVERY %}
